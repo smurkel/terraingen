@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Environments">
+      <UniqueIdentifier>{CD5D501A-B9C0-DFBE-6246-18754E88AB41}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Environments\TestEnvironment.h">
+      <Filter>Environments</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Environments\TestEnvironment.cpp">
+      <Filter>Environments</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SandboxApp.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\Texture.glsl" />
+    <None Include="assets\shaders\OceanShader.glsl" />
+    <None Include="assets\shaders\SeaShaderGeometry.glsl" />
+    <None Include="assets\shaders\SeaShaderSmooth.glsl" />
+    <None Include="assets\shaders\DefaultPolyShader.glsl" />
+    <None Include="assets\shaders\compute\BoatTransform.glsl" />
+    <None Include="assets\shaders\compute\ButterflyTexture.glsl" />
+    <None Include="assets\shaders\compute\FFT.glsl" />
+    <None Include="assets\shaders\compute\FFT_inversionpermutation.glsl" />
+    <None Include="assets\shaders\compute\Spectrum_generate.glsl" />
+    <None Include="assets\shaders\compute\Spectrum_update.glsl" />
+    <None Include="assets\shaders\TerrainShader.glsl" />
+    <None Include="assets\shaders\compute\Erosion.glsl" />
+    <None Include="assets\shaders\compute\GaussianBlur.glsl" />
+  </ItemGroup>
+</Project>
