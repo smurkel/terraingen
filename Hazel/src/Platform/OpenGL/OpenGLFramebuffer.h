@@ -14,7 +14,7 @@ namespace Hazel {
 		void Invalidate();
 
 		virtual void Bind() override;
-		virtual void Unbind(int width, int height) override;
+		virtual void Unbind() override;
 
 		virtual uint32_t GetColorAttachmentRendererID() const override { return m_ColorAttachment; }
 		virtual uint32_t GetDepthAttachmentRendererID() const override { return m_DepthAttachment; }

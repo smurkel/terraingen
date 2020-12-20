@@ -23,23 +23,23 @@ private:
 
 	Hazel::CameraController m_CameraController;
 
-	Hazel::Ocean m_Ocean;
-	Hazel::Boat m_Boat;
+	/*Hazel::Ocean m_Ocean;
+	Hazel::Boat m_Boat;*/
 
 	Hazel::Library m_Library;
 	
-	Hazel::WaterPhysicsEngine m_WPE;
-	Hazel::VisibleWorld m_VisibleWorld;
+	/*Hazel::WaterPhysicsEngine m_WPE;
+	Hazel::VisibleWorld m_VisibleWorld;*/
 	// 200925
-	glm::vec4 c_Emissive;
+	/*glm::vec4 c_Emissive;
 	glm::vec4 c_Diffuse;
 	glm::vec4 c_Ambient;
-	glm::vec4 c_Specular;
+	glm::vec4 c_Specular;*/
 	// 200923:
 	int N = 256;
-	float scale = 5;
+	float scale = 2;
 	float gridsize = 100;
-	float height = 5.0;
+	float height = 10.0;
 	int octaves = 12;
 	float persistence = 0.3;
 	float lacunarity = 2.5;
@@ -49,16 +49,16 @@ private:
 	// erosion settings
 	int ITERATIONS = 1;
 	float VELOCITY = 1.0;
-	float VOLUME = 1.0;
-	float INERTIA = 0.4;
+	float VOLUME = 0.2;
+	float INERTIA = 0.2;
 	float CAPACITY = 8.0;
 	float EROSION = 0.5;
 	float GRAVITY = 10.0;
-	float EVAPORATION = 0.0125;
+	float EVAPORATION = 0.02;
 	float DEPOSITION = 0.1;
-	int MINSLOPE_EXP = -3;
+	int MINSLOPE_EXP = -2;
 	float MINSLOPE = 0.001;
-	float WATERLEVEL = -1.0;
+	float WATERLEVEL = -10.0;
 	bool INVERTEROSION = false;
 	int MAXSTEPS = 64;
 	float ARIDITY = 0.0; 

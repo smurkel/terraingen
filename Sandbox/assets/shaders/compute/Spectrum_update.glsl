@@ -6,6 +6,7 @@ layout(local_size_x = 16, local_size_y = 16) in;
 layout(binding = 0, rgba32f) writeonly uniform image2D tilde_hkt_dy;
 layout(binding = 1, rgba32f) writeonly uniform image2D tilde_hkt_dx;
 layout(binding = 2, rgba32f) writeonly uniform image2D tilde_hkt_dz;
+//layout(binding = 5, rgba32f) writeonly uniform image2D tilde_hkt_dn;
 layout(binding = 3, rgba32f) readonly uniform image2D tilde_h0k;
 layout(binding = 4, rgba32f) readonly uniform image2D tilde_h0minusk;
 
@@ -47,7 +48,7 @@ void main(void)
 	vec2 k = vec2(2.0 * M_PI * x.x/L, 2.0 * M_PI * x.y/L);
 
 	float magnitude = length(k);
-	if (magnitude < 0.0001) magnitude = 0.0001;
+	if (magnitude < 0.0000001) magnitude = 0.0000001;
 	float w = sqrt(9.81 * magnitude);
 
 	vec2 tilde_h0k_values = imageLoad(tilde_h0k, ivec2(gl_GlobalInvocationID.xy)).rg;
@@ -63,14 +64,14 @@ void main(void)
 	complex exp_iwt_inv = complex(cos_w_t, -sin_w_t);
 	// dy
 	complex h_k_t_dy = add(mul(fourier_cmp, exp_iwt), mul(fourier_cmp_conj, exp_iwt_inv));
-	// dx
+	// dx, also d(DY)/dx
 	complex dx = complex(0.0,-k.x/magnitude);
 	complex h_k_t_dx = mul(dx, h_k_t_dy);
-	// dz
+	// dz, also d(DY)/dz
 	complex dy = complex(0.0,-k.y/magnitude);
 	complex h_k_t_dz = mul(dy, h_k_t_dy);
-
 	imageStore(tilde_hkt_dy, ivec2(gl_GlobalInvocationID.xy), vec4(h_k_t_dy.real, h_k_t_dy.im, 0, 1));
-	imageStore(tilde_hkt_dx, ivec2(gl_GlobalInvocationID.xy), vec4(h_k_t_dx.real, h_k_t_dx.im, 0, 1));
-	imageStore(tilde_hkt_dz, ivec2(gl_GlobalInvocationID.xy), vec4(h_k_t_dz.real, h_k_t_dz.im, 0, 1)); 
+	imageStore(tilde_hkt_dx, ivec2(gl_GlobalInvocationID.xy), vec4(h_k_t_dx.real, h_k_t_dx.im, -h_k_t_dy.im * k.x, h_k_t_dy.real * k.x));
+	imageStore(tilde_hkt_dz, ivec2(gl_GlobalInvocationID.xy), vec4(h_k_t_dz.real, h_k_t_dz.im, -h_k_t_dy.im * k.y, h_k_t_dy.real * k.y)); 
+	//imageStore(tilde_hkt_dn, ivec2(gl_GlobalInvocationID.xy), vec4(-h_k_t_dx.im * k.x, h_k_t_dx.real * k.x, -h_k_t_dz.im * k.y, h_k_t_dz.real * k.y)); 
 }

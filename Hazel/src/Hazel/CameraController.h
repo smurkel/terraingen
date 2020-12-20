@@ -28,11 +28,11 @@ namespace Hazel {
 		glm::vec3 m_CameraPosition = { 15.0f, 0.0f, 45.0f };
 		glm::vec3 m_CameraFocus = { 0.0f, 0.0f, 0.0f };
 
-		float m_CameraTranslationSpeed = 3.0f;
+		float m_CameraTranslationSpeed = 0.2f;
 		float m_CameraRotationSpeed = 0.2f;
-		float m_CameraZoomSpeed = 0.5f;
+		float m_CameraZoomSpeed = 1.5f;
 
-		float m_CameraMinZoom = 100.0f;
+		float m_CameraMinZoom = 400.0f;
 		float m_CameraMaxZoom = 1.0f;
 		float m_CameraMaxPolar = 90.0;
 		float m_CameraMinPolar = 15.0;

@@ -18,8 +18,9 @@ namespace Hazel
 		std::dynamic_pointer_cast<OpenGLShader>(cs_FloatingObjectTransform)->UploadUniformFloat3("rb_Pos", rb.x);
 		std::dynamic_pointer_cast<OpenGLShader>(cs_FloatingObjectTransform)->UploadUniformMat3("rb_Rot", glm::mat4(rb.R));
 
-		std::dynamic_pointer_cast<OpenGLShader>(cs_FloatingObjectTransform)->UploadUniformFloat("u_L", m_Ocean->GetL());
-		std::dynamic_pointer_cast<OpenGLShader>(cs_FloatingObjectTransform)->UploadUniformInt("u_N", m_Ocean->GetN());
+		// COMMENTING OUT THESE LINES THAT REFER TO M_OCEAN WHICH (AT 15/12/2020) WAS NO LONGER IN USED - REPLACED BY OCEANHR, WHICH ACTS AS A WRAPPER AROUND 3 DIFFERENT (IN SCALE) OCEAN GEOMETRY CLASSES
+		//std::dynamic_pointer_cast<OpenGLShader>(cs_FloatingObjectTransform)->UploadUniformFloat("u_L", m_Ocean->GetL());
+		//std::dynamic_pointer_cast<OpenGLShader>(cs_FloatingObjectTransform)->UploadUniformInt("u_N", m_Ocean->GetN());
 
 		glBindImageTexture(0, _x->GetRendererID(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
 		glBindImageTexture(1, _y->GetRendererID(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);

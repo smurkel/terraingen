@@ -2,41 +2,40 @@
 #include "Hazel/Events/Event.h"
 
 TestEnvironment::TestEnvironment()
-	: Layer("Test layer"), m_CameraController(), m_VisibleWorld(m_Library, m_CameraController.GetCamera())
+	: Layer("Test layer"), m_CameraController()
 {
-	m_Ocean.Generate(256, 100, 0.1, glm::vec2(5.0, 2.0), 3);
-	//m_WPE.SetOcean(&m_Ocean);
-	m_VisibleWorld.SetOcean(&m_Ocean);
-	m_VisibleWorld.SetTerrain(&m_Terrain);
+	//m_Ocean.Generate(256, 100, 0.1, glm::vec2(5.0, 2.0), 3);
+	////m_WPE.SetOcean(&m_Ocean);
+	//m_VisibleWorld.SetOcean(&m_Ocean);
+	//m_VisibleWorld.SetTerrain(&m_Terrain);
 	//m_Boat.SetShader(m_Library.GetShader("assets/shaders/DefaultPolyShader.glsl"));
 	//m_Boat.SetModel(m_Library.GetModel("assets/models/RaftValid.obj", "assets/textures/Palettes.png"));
 	//m_VisibleWorld.AddEntity(&m_Boat);
 
-	m_VisibleWorld.SetCamera(m_CameraController.GetCamera());
+	//m_VisibleWorld.SetCamera(m_CameraController.GetCamera());
 }
 
 void TestEnvironment::OnUpdate(Hazel::Timestep ts)
 {
 	
-	m_Ocean.Update(ts);
+	//m_Ocean.Update(ts);
 	//m_Boat.OnUpdate(ts, m_WPE);
 	////m_CameraController.SetFocus(m_Boat.GetPosition());
 	//
 	m_CameraController.OnUpdate(ts);
 
-	//Hazel::RenderCommand::SetClearColor(glm::vec4(0.2, 0.5, 0.7, 1.0));
-	//Hazel::RenderCommand::Clear();
-	//Hazel::Renderer::BeginScene(m_CameraController.GetCamera(), glm::vec3(1.0, 1.0, 1.0));
-	//m_Terrain.Render(m_CameraController.GetCamera());
+	Hazel::RenderCommand::SetClearColor(glm::vec4(0.2, 0.5, 0.7, 1.0));
+	Hazel::RenderCommand::Clear();
+	Hazel::Renderer::BeginScene(m_CameraController.GetCamera(), glm::vec3(1.0, 1.0, 1.0));
+	m_Terrain.Render(m_CameraController.GetCamera());
 	
 	//m_Ocean.Render(m_CameraController.GetCamera());
-	//Hazel::Renderer::EndScene();
-	HZ_CORE_INFO("fps: {0}", (1.0 / ts.GetSeconds()));
-	m_VisibleWorld.Render();
-	c_Emissive = m_Ocean.GetColorVec4(0);
+	Hazel::Renderer::EndScene();
+	//m_VisibleWorld.Render();
+	/*c_Emissive = m_Ocean.GetColorVec4(0);
 	c_Ambient = m_Ocean.GetColorVec4(1);
 	c_Diffuse = m_Ocean.GetColorVec4(2);
-	c_Specular = m_Ocean.GetColorVec4(3);
+	c_Specular = m_Ocean.GetColorVec4(3);*/
 }
 
 void TestEnvironment::OnImGuiRender()
@@ -61,9 +60,8 @@ void TestEnvironment::OnImGuiRender()
 			seed = m_Terrain.GetSeed();
 			HZ_CORE_INFO("Current seed: {0}", seed);
 		}
-		
 		m_Terrain = Hazel::Terrain(seed, N, gridsize, scale, height, octaves, persistence, lacunarity);
-		m_VisibleWorld.SetTerrain(&m_Terrain);
+		//m_VisibleWorld.SetTerrain(&m_Terrain);
 	}
 	bool exportMap = ImGui::Button("Export");
 	if (exportMap)
@@ -112,8 +110,8 @@ void TestEnvironment::OnImGuiRender()
 	_temp = m_Terrain.GetHeightScalingFactor();
 	ImGui::SliderFloat("Height scaling", &_temp, -10.0, 10.0);
 	m_Terrain.SetHeightScalingFactor(_temp);
-	ImGui::SliderFloat("Aridity", &ARIDITY, 0.0, 2.0);
-	ImGui::SliderFloat("Growth steepness", &GROWTHSTEEPNESS, 0.0, 10.0);
+	ImGui::SliderFloat("Aridity", &ARIDITY, -1.0, 2.0);
+	ImGui::SliderFloat("Growth steepness", &GROWTHSTEEPNESS, -1.0, 10.0);
 	m_Terrain.SetLushOffset(ARIDITY);
 	m_Terrain.SetLushScale(GROWTHSTEEPNESS);
 	bool updateTexture = ImGui::Button("Update Texture");
@@ -121,19 +119,20 @@ void TestEnvironment::OnImGuiRender()
 	{
 		m_Terrain.UpdateTexture();
 	}
-	_temp = m_Ocean.GetMurkiness();
+	/*_temp = m_Ocean.GetMurkiness();
 	ImGui::SliderFloat("Murkiness", &_temp, 0.0, 25.0);
 	m_Ocean.SetMurkiness(_temp);
 	ImGui::ColorEdit3("Emissive", &c_Emissive[0]);
 	ImGui::ColorEdit3("Ambient", &c_Ambient[0]);
 	ImGui::ColorEdit3("Diffuse", &c_Diffuse[0]);
-	ImGui::ColorEdit3("Specular", &c_Specular[0]);
-	m_Ocean.SetColorVec4(0, c_Emissive);
+	ImGui::ColorEdit3("Specular", &c_Specular[0]);*/
+	/*m_Ocean.SetColorVec4(0, c_Emissive);
 	m_Ocean.SetColorVec4(1, c_Ambient);
 	m_Ocean.SetColorVec4(2, c_Diffuse);
-	m_Ocean.SetColorVec4(3, c_Specular);
+	m_Ocean.SetColorVec4(3, c_Specular);*/
 	ImGui::Image((void*)m_Terrain.GetErosionMapID(), ImVec2{ 256.0f, 256.0f });
-	ImGui::Image((void*)m_Terrain.GetBlurMapID(), ImVec2{ 256.0f, 256.0f });
+	ImGui::Image((void*)m_Terrain.GetHeightMapID(), ImVec2{ 256.0f, 256.0f });
+	ImGui::Image((void*)m_Terrain.GetHumidityMapID(), ImVec2{ 256.0f, 256.0f });
 	ImGui::End();
 	
 
@@ -149,23 +148,23 @@ void TestEnvironment::OnEvent(Hazel::Event& e)
 
 bool TestEnvironment::OnKeyPressed(Hazel::KeyPressedEvent& e)
 {
-	glm::vec2 wind = m_Ocean.GetWind();
-	if (e.GetKeyCode() == HZ_KEY_I) wind.x = wind.x + 1;
-	if (e.GetKeyCode() == HZ_KEY_K) wind.x = wind.x - 1;
-	if (e.GetKeyCode() == HZ_KEY_J) wind.y = wind.y - 1;
-	if (e.GetKeyCode() == HZ_KEY_L) wind.y = wind.y + 1;
-	m_Ocean.SetWind(wind);
-	
-	//HZ_CORE_INFO("Wind: ({0}, {1})", m_Ocean.GetWind().x, m_Ocean.GetWind().y);
+	//glm::vec2 wind = m_Ocean.GetWind();
+	//if (e.GetKeyCode() == HZ_KEY_I) wind.x = wind.x + 1;
+	//if (e.GetKeyCode() == HZ_KEY_K) wind.x = wind.x - 1;
+	//if (e.GetKeyCode() == HZ_KEY_J) wind.y = wind.y - 1;
+	//if (e.GetKeyCode() == HZ_KEY_L) wind.y = wind.y + 1;
+	//m_Ocean.SetWind(wind);
+	//
+	////HZ_CORE_INFO("Wind: ({0}, {1})", m_Ocean.GetWind().x, m_Ocean.GetWind().y);
 
-	float amp = m_Ocean.GetAmplitude();
-	if (e.GetKeyCode() == HZ_KEY_Q) amp += 0.025;
-	if (e.GetKeyCode() == HZ_KEY_E) amp -= 0.025;
-	if (e.GetKeyCode() == HZ_KEY_SPACE) m_Ocean.InvDynamic();
+	//float amp = m_Ocean.GetAmplitude();
+	//if (e.GetKeyCode() == HZ_KEY_Q) amp += 0.025;
+	//if (e.GetKeyCode() == HZ_KEY_E) amp -= 0.025;
+	//if (e.GetKeyCode() == HZ_KEY_SPACE) m_Ocean.InvDynamic();
 
-	m_Ocean.SetAmplitude(amp);
-	//HZ_CORE_INFO("Amplitude = {0}", m_Ocean.GetAmplitude());
+	//m_Ocean.SetAmplitude(amp);
+	////HZ_CORE_INFO("Amplitude = {0}", m_Ocean.GetAmplitude());
 
-	m_Ocean.UpdateSpectrum();
+	//m_Ocean.UpdateSpectrum();
 	return true;
 }

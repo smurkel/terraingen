@@ -16,6 +16,8 @@ uniform int L;
 uniform float A; 
 uniform vec2 _windDirection; 
 uniform int windexponent;
+uniform float kmax;
+
 
 const float windspeed = length(_windDirection);
 const vec2 windDirection = normalize(_windDirection);
@@ -47,28 +49,28 @@ void main(void)
 	vec2 k = vec2(2.0 * M_PI * x.x/L, 2.0 * M_PI * x.y/L);
 
 	float L_ = (windspeed * windspeed) / g;
-	float mag = length(k);
-	if (mag < 0.00001) mag = 0.00001;
+	float mag = max(0.0000001, length(k));
+	
 	float magSq = mag * mag;
 
 	float h0k = sqrt(
 				(A / (magSq * magSq * 2))
 				* pow(abs(dot(normalize(k), windDirection)), windexponent)
 				* exp(-(1.0 / (magSq * L_ * L_)))
-				* exp(-magSq*pow(L/5000.0,2.0))
+				* exp(-magSq*pow(L/250.0,2.0))
 				);
 
 	float h0minusk = sqrt(
 				(A / (magSq * magSq * 2))
 				* pow(abs(dot(normalize(-k), windDirection)), windexponent)
 				* exp(-(1.0 / (magSq * L_ * L_)))
-				* exp(-magSq*pow(L/5000.0,2.0))
+				* exp(-magSq*pow(L/250.0,2.0))
 				);
 
 	h0k = clamp(h0k, -8000, 8000);
 	h0minusk = clamp(h0minusk, -8000, 8000);
 
-	if (mag < 0.0001)
+	if ((mag < 0.0001) || (mag > kmax))
 	{
 		h0k = 0;
 		h0minusk = 0;

@@ -147,6 +147,7 @@
     <ClInclude Include="src\Hazel\Core\Timestep.h" />
     <ClInclude Include="src\Hazel\Entity\Boat.h" />
     <ClInclude Include="src\Hazel\Entity\Entity.h" />
+    <ClInclude Include="src\Hazel\Entity\Island.h" />
     <ClInclude Include="src\Hazel\Entity\Library.h" />
     <ClInclude Include="src\Hazel\Entity\Model.h" />
     <ClInclude Include="src\Hazel\Entity\RigidBody.h" />
@@ -155,8 +156,10 @@
     <ClInclude Include="src\Hazel\Events\Event.h" />
     <ClInclude Include="src\Hazel\Events\KeyEvent.h" />
     <ClInclude Include="src\Hazel\Events\MouseEvent.h" />
+    <ClInclude Include="src\Hazel\Experimental\Isle.h" />
     <ClInclude Include="src\Hazel\Experimental\PerlinNoise.h" />
     <ClInclude Include="src\Hazel\Experimental\Terrain.h" />
+    <ClInclude Include="src\Hazel\Experimental\Landscape.h" />
     <ClInclude Include="src\Hazel\Hazel.h" />
     <ClInclude Include="src\Hazel\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Hazel\Input.h" />
@@ -578,11 +581,14 @@
     <ClCompile Include="src\Hazel\CameraController.cpp" />
     <ClCompile Include="src\Hazel\Entity\Boat.cpp" />
     <ClCompile Include="src\Hazel\Entity\Entity.cpp" />
+    <ClCompile Include="src\Hazel\Entity\Island.cpp" />
     <ClCompile Include="src\Hazel\Entity\Library.cpp" />
     <ClCompile Include="src\Hazel\Entity\Model.cpp" />
     <ClCompile Include="src\Hazel\Entity\RigidBody.cpp" />
     <ClCompile Include="src\Hazel\Entity\VisibleWorld.cpp" />
+    <ClCompile Include="src\Hazel\Experimental\Isle.cpp" />
     <ClCompile Include="src\Hazel\Experimental\Terrain.cpp" />
+    <ClCompile Include="src\Hazel\Experimental\Landscape.cpp" />
     <ClCompile Include="src\Hazel\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Hazel\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Hazel\Layer.cpp" />

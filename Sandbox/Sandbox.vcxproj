@@ -131,9 +131,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="assets\shaders\TerrainShader2.glsl" />
+    <ClInclude Include="src\Environments\TerrainTests.h" />
     <ClInclude Include="src\Environments\TestEnvironment.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Environments\TerrainTests.cpp" />
     <ClCompile Include="src\Environments\TestEnvironment.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />
   </ItemGroup>
@@ -146,15 +149,24 @@
     <None Include="assets\shaders\compute\BoatTransform.glsl" />
     <None Include="assets\shaders\compute\ButterflyTexture.glsl" />
     <None Include="assets\shaders\compute\Erosion.glsl" />
+    <None Include="assets\shaders\compute\Erosion2.glsl" />
     <None Include="assets\shaders\compute\FFT.glsl" />
     <None Include="assets\shaders\compute\FFT_inversionpermutation.glsl" />
     <None Include="assets\shaders\compute\GaussianBlur.glsl" />
     <None Include="assets\shaders\compute\Spectrum_generate.glsl" />
     <None Include="assets\shaders\compute\Spectrum_update.glsl" />
     <None Include="assets\shaders\DefaultPolyShader.glsl" />
+    <None Include="assets\shaders\HeightMapShadowSampler.glsl" />
+    <None Include="assets\shaders\IsleShader.glsl" />
+    <None Include="assets\shaders\IsleShaderNoGeometry.glsl" />
+    <None Include="assets\shaders\LandscapeErosion.glsl" />
+    <None Include="assets\shaders\LandscapeShader.glsl" />
     <None Include="assets\shaders\OceanShader.glsl" />
+    <None Include="assets\shaders\OceanShaderSmooth.glsl" />
+    <None Include="assets\shaders\OceanShaderSmoothLight.glsl" />
     <None Include="assets\shaders\SeaShaderGeometry.glsl" />
     <None Include="assets\shaders\SeaShaderSmooth.glsl" />
+    <None Include="assets\shaders\HeightMapShadowMapper.glsl" />
     <None Include="assets\shaders\TerrainShader.glsl" />
     <None Include="assets\shaders\Texture.glsl" />
   </ItemGroup>

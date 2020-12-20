@@ -89,6 +89,8 @@ namespace Hazel {
 		const char* typeToken = "#type";
 		size_t typeTokenLength = strlen(typeToken);
 		size_t pos = source.find(typeToken, 0);
+		if (pos == std::string::npos)
+			HZ_CORE_ASSERT(false, "Token '#type' not found in shader source")
 		while (pos != std::string::npos)
 		{
 			size_t eol = source.find_first_of("\r\n", pos);
@@ -108,7 +110,7 @@ namespace Hazel {
 	{
 		// 200413: I added geometry shader possibility
 		GLuint program = glCreateProgram();
-		HZ_CORE_ASSERT(shaderSources.size() <= 3, "We only support (2 + 1 geometry) shaders for now");
+		HZ_CORE_ASSERT(shaderSources.size() <= 3, "We only support at max 3 (vertex, geometry, fragment) shaders for now");
 		std::array<GLenum, 3> glShaderIDs;
 		int glShaderIDIndex = 0;
 		for (auto& kv : shaderSources)

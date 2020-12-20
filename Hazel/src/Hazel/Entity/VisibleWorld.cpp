@@ -1,7 +1,7 @@
 #include "hzpch.h"
 
 #include "Hazel/Entity/VisibleWorld.h"
-
+#include <glad/glad.h>
 
 namespace Hazel
 {
@@ -12,26 +12,27 @@ namespace Hazel
 
 	void VisibleWorld::Render()
 	{
+		glEnable(GL_CLIP_DISTANCE0);
 		//// Reflection pass
-		//m_WaterRendererWrapper.BindReflectionFB();
-		//RenderCommand::SetClearColor(glm::vec4(0.2, 0.5, 0.7, 1.0));
-		//RenderCommand::Clear();
-		//m_Camera.InvertY();
-		//Renderer::BeginScene(m_Camera, m_Weather.SunPosition);
+		m_WaterRendererWrapper.BindReflectionFB();
+		RenderCommand::SetClearColor(m_Ocean->GetColorVec4(2));
+		RenderCommand::Clear();
+		m_Camera.InvertY();
+		Renderer::BeginScene(m_Camera, m_Weather.SunPosition);
 		//this->RenderEntities();
-		//m_Terrain->Render(m_Camera);
-		//Renderer::EndScene();
-		//m_Camera.InvertY();
-
+		m_Isle->Render(m_Camera);
+		Renderer::EndScene();
+		m_Camera.InvertY();
+		glDisable(GL_CLIP_DISTANCE0);
+		glEnable(GL_CLIP_DISTANCE1);
 		// Refraction pass
 		m_WaterRendererWrapper.BindRefractionFB();
 		RenderCommand::Clear();
 		Renderer::BeginScene(m_Camera, m_Weather.SunPosition);
-		//HZ_CORE_INFO("Reflection pass camera position: {0}", m_Camera.GetPositionXYZ());
 		this->RenderEntities();
-		m_Terrain->Render(m_Camera);
+		m_Isle->Render(m_Camera);
 		Renderer::EndScene();
-
+		glDisable(GL_CLIP_DISTANCE1);
 		// Render to screen
 		m_WaterRendererWrapper.BindScreen();
 		RenderCommand::SetClearColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
@@ -39,7 +40,7 @@ namespace Hazel
 		Renderer::BeginScene(m_Camera, m_Weather.SunPosition);
 		this->RenderEntities();
 		m_Ocean->Render(m_Camera);
-		m_Terrain->Render(m_Camera);
+		m_Isle->Render(m_Camera);
 		Renderer::EndScene();
 	}
 

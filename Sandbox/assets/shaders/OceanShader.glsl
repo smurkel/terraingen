@@ -2,19 +2,37 @@
 #version 430
 
 layout(location = 0) in vec2 index;
-layout(binding = 0) uniform sampler2D _X;
-layout(binding = 1) uniform sampler2D _Y;
-layout(binding = 2) uniform sampler2D _Z;
+layout(binding = 0) uniform sampler2D X0;
+layout(binding = 1) uniform sampler2D Y0;
+layout(binding = 2) uniform sampler2D Z0;
+layout(binding = 3) uniform sampler2D X1;
+layout(binding = 4) uniform sampler2D Y1;
+layout(binding = 5) uniform sampler2D Z1;
+layout(binding = 6) uniform sampler2D X2;
+layout(binding = 7) uniform sampler2D Y2;
+layout(binding = 8) uniform sampler2D Z2;
+layout(binding = 9) uniform sampler2D N0;
+layout(binding = 10) uniform sampler2D N1;
+layout(binding = 11) uniform sampler2D N2;
+
+uniform int L0;
+uniform int L1;
+uniform int L2;
 
 out vec3 GridCoordinates;
 uniform int L;
-
+uniform float u_Waterlevel;
 void main()
 {
-	vec2 X = (index - 0.5) * L;
-	float dx = texture(_X, index).r;
-	float dy = texture(_Y, index).r;
-	float dz = texture(_Z, index).r;
+	// MESH INDICES
+	vec2 X = index;
+	vec2 ix0 = X / L0;
+	vec2 ix1 = X / L1;
+	vec2 ix2 = X / L2;
+	// GEOMETRY
+	float dx = texture(X0, ix0).r + texture(X1, ix1).r + texture(X2, ix2).r;
+	float dy = 1.0 * texture(Y0, ix0).r + 1.0 * texture(Y1, ix1).r + 1.0 * texture(Y2, ix2).r;
+	float dz = texture(Z0, ix0).r + texture(Z1, ix1).r + texture(Z2, ix2).r;
 	gl_Position = vec4(X.x - dx, dy, X.y - dz, 1.0);
 	GridCoordinates = vec3(gl_Position[0], gl_Position[1], gl_Position[2]);
 }
@@ -134,32 +152,35 @@ void main (void)
 	// REFLECTION AND REFRACTION //
 	///////////////////////////////
 
-	vec2 ndc = (clipSpaceGrid.xy/clipSpaceGrid.w) / 2.0 + 0.5;
-	ndc = clamp(ndc, 0.001, 0.999);
-	vec2 ndcReal = (clipSpaceReal.xy/clipSpaceReal.w) / 2.0 + 0.5;
-	ndcReal = clamp(ndc, 0.001, 0.999);
-	vec2 refractTexCoords = vec2(ndc.x, ndc.y);
-	vec2 reflectTexCoords = vec2(ndc.x, -ndc.y);
+	if (1 == 0)
+	{
+		vec2 ndc = (clipSpaceGrid.xy/clipSpaceGrid.w) / 2.0 + 0.5;
+		ndc = clamp(ndc, 0.001, 0.999);
+		vec2 ndcReal = (clipSpaceReal.xy/clipSpaceReal.w) / 2.0 + 0.5;
+		ndcReal = clamp(ndc, 0.001, 0.999);
+		vec2 refractTexCoords = vec2(ndc.x, ndc.y);
+		vec2 reflectTexCoords = vec2(ndc.x, -ndc.y);
 
-	float floorDistance = toLinearDepth(texture(DepthTexture, refractTexCoords).r);
-	float waterDistance = toLinearDepth(gl_FragCoord.z);
-	float depth = clamp((floorDistance - waterDistance) / u_Murkiness, 0.0, 1.0);
-	vec3 _refractColor = texture(RefractionTexture, refractTexCoords).rgb;
-	vec3 refractColor = mix(_refractColor, fragColor.rgb, depth);
+		float floorDistance = toLinearDepth(texture(DepthTexture, refractTexCoords).r);
+		float waterDistance = toLinearDepth(gl_FragCoord.z);
+		float depth = clamp((floorDistance - waterDistance) / u_Murkiness, 0.0, 1.0);
+		vec3 _refractColor = texture(RefractionTexture, refractTexCoords).rgb;
+		vec3 refractColor = mix(_refractColor, fragColor.rgb, depth);
 	
 
-	vec3 reflectColor = texture(ReflectionTexture, reflectTexCoords).rgb +
-						((Reflection>0.0) ?
-							C_Specular.rgb * pow(Reflection,120) : vec3(0.0, 0.0, 0.0));
-	vec3 _finalColor = mix(reflectColor, refractColor,pow(RefractiveFactor,0.5));
-	vec4 finalColor = vec4(_finalColor, 1.0);
+		vec3 reflectColor = texture(ReflectionTexture, reflectTexCoords).rgb +
+							((Reflection>0.0) ?
+								C_Specular.rgb * pow(Reflection,120) : vec3(0.0, 0.0, 0.0));
+		vec3 _finalColor = mix(reflectColor, refractColor,pow(RefractiveFactor,0.5));
+		vec4 finalColor = vec4(_finalColor, 1.0);
+	}
 
 	
 	///////////////////
 	// MIXING IMAGES //
 	///////////////////
 
-	fragColor = mix(fragColor, finalColor, 1.0);
+	//fragColor = mix(fragColor, finalColor, 1.0);
 	if (Fog > 0.6)
 	{
 		//float fog = (Fog-0.6)/(1-0.6);

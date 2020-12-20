@@ -17,7 +17,7 @@ namespace Hazel {
 	{
 	public:
 		virtual void Bind() = 0;
-		virtual void Unbind(int width, int height) = 0;
+		virtual void Unbind() = 0;
 
 		virtual uint32_t GetColorAttachmentRendererID() const = 0;
 		virtual uint32_t GetDepthAttachmentRendererID() const = 0;

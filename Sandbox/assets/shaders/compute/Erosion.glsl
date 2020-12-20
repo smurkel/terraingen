@@ -22,7 +22,7 @@ uniform int INVERTEROSION;
 uniform int MAXSTEPS;
 uniform float WATERLEVEL;
 
-int RADIUS = 10;
+int RADIUS = 15;
 
 vec2 localGradient(vec2 pos)
 {
@@ -157,7 +157,7 @@ void main(void)
 		if ((pos.x < 0) || (pos.x > N) || (pos.y < 0) || (pos.y > N))
 			break;
 		
-		float hOld = h;;
+		float hOld = h;
 		float hDiff = localHeight(pos) - hOld;
 		h = localHeight(pos);
 		if (hDiff > 0.0)

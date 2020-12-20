@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 #include <random>
 #include <fstream>
+#include <ctime>
 
 Hazel::Terrain::Terrain(uint32_t seed, const int N, const float gridsize, const float L, float height, int octaves, float persistence, float lacunarity)
 	: p_Seed(seed), p_N(N), p_Gridsize(gridsize), p_L(L), p_H(height), p_Octaves(octaves), p_Persistence(persistence), p_Lacunarity(lacunarity)
@@ -18,14 +19,23 @@ Hazel::Terrain::Terrain(uint32_t seed, const int N, const float gridsize, const 
 		int row = x * N;
 		for (int z = 0; z < N; z++)
 		{
-			float _x = (x - N/2.0) * _d;
-			float _z = (z - N/2.0) * _d;
+			float _x = (x - N / 2.0) * _d;
+			float _z = (z - N / 2.0) * _d;
 			int baseIdx = 4 * (row + z);
 			// height map
-			*(pxd + baseIdx + 0) = _x * gridsize / L;
-			*(pxd + baseIdx + 1) = height * pNoisePixel(_pnoise, _x, _z, p_Octaves, p_Persistence, p_Lacunarity);
-			*(pxd + baseIdx + 2) = _z * gridsize / L;
-			*(pxd + baseIdx + 3) = 0.0;
+			float hRock = 2.0 + height * (1 + pNoisePixel(_pnoise, _x, _z, p_Octaves, p_Persistence, p_Lacunarity));
+			float hStone = height * 0.4 * (0.2 + pNoisePixel(_pnoise, L + 1.5 * _x, L + 1.5 * _z, p_Octaves, p_Persistence, p_Lacunarity)) - 0.2;
+			float hSand = height * 0.2 * (0.2 + pNoisePixel(_pnoise, 2 * _x, 2 * _z, p_Octaves, p_Persistence, p_Lacunarity)) - 0.4;
+			if (hRock < 0.5)
+				hRock = 0.5;
+			if (hStone < 0.0)
+				hStone = 0.0;
+			if (hSand < 0.0)
+				hSand = 0.0;
+			*(pxd + baseIdx + 0) = hRock; // rock
+			*(pxd + baseIdx + 1) = hStone;// hStone; // sandstone
+			*(pxd + baseIdx + 2) = hSand;// hSand; // sand
+			*(pxd + baseIdx + 3) = 1.0;
 			// erosion map
 			*(pxdErosion + baseIdx + 0) = 0.0;
 			*(pxdErosion + baseIdx + 1) = 0.0;
@@ -37,6 +47,7 @@ Hazel::Terrain::Terrain(uint32_t seed, const int N, const float gridsize, const 
 	m_Heightmap = new csTexture(N, N, pxd);
 	m_Erosionmap = new csTexture(N, N, pxdErosion);
 	m_RandomTexture = new csTexture(N, N, nullptr);
+	m_Humiditymap = new csTexture(N, N, nullptr);
 	delete[] pxd;
 	// Make index buffer
 	m_Indices = new uint32_t[(N - 1) * (N - 1) * 6];
@@ -60,7 +71,7 @@ Hazel::Terrain::Terrain(uint32_t seed, const int N, const float gridsize, const 
 	vb.reset(VertexBuffer::Create(m_Vertices, sizeof(glm::vec2) * N * N));
 	vb->SetLayout({
 		{Hazel::ShaderDataType::Float2, "index"},
-	});
+		});
 	Ref<IndexBuffer> ib;
 	ib.reset(IndexBuffer::Create(m_Indices, (N - 1) * (N - 1) * 6));
 	m_VA->SetPrimitiveType(PrimitiveType::Triangles);
@@ -80,8 +91,10 @@ void Hazel::Terrain::Render(Camera& camera)
 	glBindTexture(GL_TEXTURE_2D, m_Erosionmap->GetRendererID());
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, m_HeightMapTexture->GetRendererID());
-
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, m_Humiditymap->GetRendererID());
 	std::dynamic_pointer_cast<OpenGLShader>(m_RenderShader)->UploadUniformFloat("N", (float)p_N);
+	std::dynamic_pointer_cast<OpenGLShader>(m_RenderShader)->UploadUniformFloat("p_Gridsize", p_Gridsize);
 	std::dynamic_pointer_cast<OpenGLShader>(m_RenderShader)->UploadUniformFloat("p_Offset", p_Offset);
 	std::dynamic_pointer_cast<OpenGLShader>(m_RenderShader)->UploadUniformFloat("p_TextureOffset", p_TexOffset);
 	std::dynamic_pointer_cast<OpenGLShader>(m_RenderShader)->UploadUniformFloat("p_HeightScale", p_HeightScale);
@@ -107,7 +120,7 @@ void Hazel::Terrain::Erode(int ITERATIONS, float VELOCITY, float VOLUME, float I
 		// fill random texture
 		std::default_random_engine generator;
 		srand(time(NULL));
-		int seed = rand() % 65535 + 1;
+		int seed = rand() % 32767 + 1;
 		generator.seed(seed);
 		std::uniform_real_distribution<float> distribution(0, 1);
 		random_pxd = new float[4 * p_N * p_N];
@@ -132,8 +145,9 @@ void Hazel::Terrain::Erode(int ITERATIONS, float VELOCITY, float VOLUME, float I
 		std::dynamic_pointer_cast<OpenGLShader>(cs_Erosion)->UploadUniformInt("height", 0);
 		std::dynamic_pointer_cast<OpenGLShader>(cs_Erosion)->UploadUniformInt("xzNoise", 1);
 		glBindImageTexture(0, m_Erosionmap->GetRendererID(), 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
-
+		glBindImageTexture(1, m_Humiditymap->GetRendererID(), 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
 		std::dynamic_pointer_cast<OpenGLShader>(cs_Erosion)->UploadUniformFloat("N", (float)p_N);
+		std::dynamic_pointer_cast<OpenGLShader>(cs_Erosion)->UploadUniformFloat3("HARDNESS", glm::vec3(1.0, 1.0, 1.0));
 		std::dynamic_pointer_cast<OpenGLShader>(cs_Erosion)->UploadUniformFloat("VELOCITY", VELOCITY);
 		std::dynamic_pointer_cast<OpenGLShader>(cs_Erosion)->UploadUniformFloat("VOLUME", VOLUME);
 		std::dynamic_pointer_cast<OpenGLShader>(cs_Erosion)->UploadUniformFloat("INERTIA", INERTIA);
@@ -182,28 +196,55 @@ void Hazel::Terrain::Blur()
 
 void Hazel::Terrain::Export()
 {
+	// timestamp for filename:
+	time_t rawtime;
+	struct tm* timeinfo;
+	char buffer[80];
+	time(&rawtime);
+	timeinfo = localtime(&rawtime);
+	strftime(buffer, 80, "%g%m%d_%H%M%S_", timeinfo);
+
+	std::string filename = "C:/Users/Mart/Desktop/dev/Hazel/Sandbox/assets/_terrain_gens/";
+	filename.append(buffer);
+	std::string seedstr = std::to_string(p_Seed);
+	filename.append(seedstr);
+	filename.append("_terrgen.obj");
+	//
 	glBindTexture(GL_TEXTURE_2D, m_Heightmap->GetRendererID());
 	float* heightMap;
 	heightMap = new float[p_N * p_N * 4];
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA32F, GL_FLOAT, heightMap);
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, heightMap);
 	glBindTexture(GL_TEXTURE_2D, m_Erosionmap->GetRendererID());
 	float* erosionMap;
 	erosionMap = new float[p_N * p_N * 4];
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA32F, GL_FLOAT, erosionMap);
-	std::ofstream objFile("C:/Users/Mart/Desktop/dev/Hazel/Sandbox/assets/_terrain_gens/test.obj");
-	for (int x = 0; x < p_N; x++)
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, erosionMap);
+	std::ofstream objFile(filename);
+	float x, y, z;
+	char lineBuffer[256];
+	objFile << "o terrgen\n";
+	std::string line;
+	for (int i = 0; i < p_N; i++)
 	{
-		for (int z = 0; z < p_N; z++)
+		for (int j = 0; j < p_N; j++)
 		{
-			uint32_t idx = (x * p_N + z) * 4 + 1; // textures are rgba, info is in green channel.
-
+			int32_t idx = (i * p_N + j) * 4; // textures are rgba, info is in green channel.
+			x = ((float)i / p_N - 0.5) * p_Gridsize;
+			//y = p_Offset + (*(heightMap + idx + 1) + *(erosionMap + idx + 1) * p_ErosionWeight) * p_HeightScale;
+			z = ((float)j / p_N - 0.5) * p_Gridsize;
+			float height = (*(heightMap + idx) + *(heightMap + idx + 1) + *(heightMap + idx + 2) + p_ErosionWeight * (*(erosionMap + idx) + *(erosionMap + idx + 1) + *(erosionMap + idx + 2)));
+			y = p_Offset + height * p_HeightScale;
+			sprintf(lineBuffer, "v %.3f %.3f %.3f\n", x, y, z);
+			line = lineBuffer;
+			objFile << line;
 		}
 	}
-	// erosion weight
-	// height scale
-	// height offset
-
-
+	for (int i = 0; i < (p_N - 1) * (p_N - 1) * 2; i++)
+	{
+		int32_t idx = 3 * i;
+		sprintf(lineBuffer, "f %i// %i// %i//\n", *(m_Indices + idx) + 1, *(m_Indices + idx + 1) + 1, *(m_Indices + idx + 2) + 1);
+		line = lineBuffer;
+		objFile << line;
+	}
 }
 
 void Hazel::Terrain::DeleteCSTextures()
@@ -231,9 +272,9 @@ Hazel::csTexture::csTexture(int N, int M, float* pxd)
 	glGenTextures(1, &m_RendererID);
 	glActiveTexture(GL_TEXTURE0); // Set the current 'texture unit' in the OpenGL pipeline that is in use.
 	glBindTexture(GL_TEXTURE_2D, m_RendererID); // This texture is then bound to the above set unit.
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, N, M, 0, GL_RGBA, GL_FLOAT, pxd); // specify the 2d image in this texture object
 }

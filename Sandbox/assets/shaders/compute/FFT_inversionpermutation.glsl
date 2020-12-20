@@ -7,7 +7,7 @@ layout(binding = 1, rgba32f) readonly uniform image2D pingpong0;
 layout(binding = 2, rgba32f) readonly uniform image2D pingpong1;
 
 uniform int pingpong;
-uniform int N;
+uniform float N;
 
 void main(void)
 {
@@ -17,13 +17,13 @@ void main(void)
 	float perm = perms[index];
 	if(pingpong == 0)
 	{
-		float h = imageLoad(pingpong0, x).r;
-		imageStore(displacement, x, vec4(perm*(h/float(N)), perm*(h/float(N)), perm*(h/float(N)), 1));
+		vec2 hn = perm / N * imageLoad(pingpong0, x).rb;
+		imageStore(displacement, x, vec4(hn.x, 0, hn.y, 1));
 	}
 	else if(pingpong == 1)
 	{
-		float h = imageLoad(pingpong1, x).r;
-		imageStore(displacement, x, vec4(perm*(h/float(N)), perm*(h/float(N)), perm*(h/float(N)), 1));
+		vec2 hn = perm / N * imageLoad(pingpong1, x).rb;
+		imageStore(displacement, x, vec4(hn.x, 0, hn.y, 1));
 	}
 }
 

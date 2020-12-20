@@ -16,94 +16,161 @@ namespace Hazel
 	{
 	public:
 		OceanTexture(int N, int M);
-
+		~OceanTexture();
 		uint32_t GetRendererID() { return m_RendererID; }
 	private:
 		uint32_t m_RendererID;
 	};
 
 	// This one will be computed using compute shaders.
+	class OceanGeometry
+	{
+	public:
+		OceanGeometry();
+		~OceanGeometry();
+		void Generate(const int N, const int L = 1000, const float A = 1.0, const glm::vec2 wind = { 5.0, 5.0 }, const int windexponent = 2, float kmax = 1000000.0);
+
+		void Update(float Time);
+		void UpdateSpectrum();
+		void LaunchFFTStage1();
+		void LaunchFFTStage2();
+		
+		uint32_t GetXYZNID(int xyzn);
+
+		void SetCSGenerate(Ref<Shader> cs) { cs_Generate = cs; }
+		void SetCSUpdate(Ref<Shader> cs) { cs_Update = cs; }
+		void SetCSFFT(Ref<Shader> cs) { cs_FFT = cs; }
+		void SetCSFFTPost(Ref<Shader> cs) { cs_FFT_post = cs; }
+
+		void BindOceanTexture(uint32_t TextureID, uint32_t Slot);
+		void _tic(unsigned int* qID);
+		float _toc(unsigned int* qID);
+
+		OceanTexture* GetDisplacementMap(int xyzn)
+		{
+			switch (xyzn)
+			{
+			case 0:	return h_dx;
+			case 1:	return h_dy;
+			case 2: return h_dz;
+			case 3: return h_dn;
+			}
+		}
+	private:
+		int _FFT_Stage1(OceanTexture* input);
+		void _FFT_Stage2(OceanTexture* input, int pingpong);
+		int ppy = 0;
+		int ppx = 0;
+		int ppz = 0;
+		int ppn = 0;
+		// Upon construction, all the necessary shaders are compiled. 
+		uint32_t m_N = 0;
+		int m_ComputeSpace[2] = { 16, 16 };
+		int m_L = 0;
+		glm::vec2 m_Wind = { 0.0, 0.0 };
+		int m_Windexponent = 0;
+		float m_A = 0.0;
+		float m_kmax = 0.0;
+		// Compute shaders and buffers:
+		uint32_t* m_Noise = nullptr;
+		OceanTexture* buffer = nullptr;
+		OceanTexture* h0_a = nullptr;
+		OceanTexture* h0_b = nullptr;
+		OceanTexture* h_dx = nullptr;
+		OceanTexture* h_dy = nullptr;
+		OceanTexture* h_dz = nullptr;
+		OceanTexture* h_dn = nullptr;
+		// Rendering shader, buffer, colours, etc.
+		Ref<Shader> cs_Generate;
+		Ref<Shader> cs_Update;
+		Ref<Shader> cs_FFT;
+		Ref<Shader> cs_FFT_post;
+	};
+
 	class Ocean
 	{
 	public:
-		Ocean(); 
-		void Generate(const int N, const int L = 1000, const float A = 1.0, const glm::vec2 wind = { 5.0, 5.0 }, const int windexponent = 2);
-
+		Ocean();
+		~Ocean();
+		void Generate(float Amplitude, glm::vec2 Wind, int Windexponent, bool lightversion = true);
 		void Update(Timestep ts);
 		void UpdateSpectrum();
-		void ComputeFFT(OceanTexture* input);
+
 		void Render(Camera& camera);
-		//void RenderBoat(Camera& camera, Boat& boat);
-
-		void SetColorVec4(int c, glm::vec4 Color);
-		glm::vec4 GetColorVec4(int c);
-
-		void SetSunPos(glm::vec3 sunpos) { m_SunPosition = sunpos; }
-		glm::vec3 GetSunPos() { return m_SunPosition; }
-
-		glm::vec2 GetWind() { return m_Wind; }
-		void SetWind(glm::vec2& wind) { m_Wind = wind; }
-
-		float GetAmplitude() { return m_A; }
-		void SetAmplitude(float A) { m_A = A; }
-
-		void SetMurkiness(float murkiness) { m_Murkiness = murkiness; }
-		float GetMurkiness() { return m_Murkiness; }
-
-		uint32_t GetN() { return m_N; }
-		int GetL() { return m_L; }
-		OceanTexture* GetDisplacementMap(int which);
-		void BindOceanTexture(uint32_t TextureID, uint32_t Slot);
-		void InvDynamic() { m_Live = !m_Live; }
 
 		void SetReflectionTextureID(uint32_t id) { m_ReflectionTextureID = id; }
 		void SetRefractionTextureID(uint32_t id) { m_RefractionTextureID = id; }
 		void SetRefractionDepthTextureID(uint32_t id) { m_RefractionDepthTextureID = id; }
+		void SetReflectionDepthTextureID(uint32_t id) { m_ReflectionDepthTextureID = id; }
+
+		void SetMurkiness(float murkiness) { m_Murkiness = murkiness; }
+		float GetMurkiness() { return m_Murkiness; }
+		void SetColorVec4(int c, glm::vec4 Color);
+		glm::vec4 GetColorVec4(int c);
+		void SetWaterlevel(float level) { m_Waterlevel = level; }
+		float GetWaterlevel() { return m_Waterlevel; }
+		void SetSunPos(glm::vec3 sunpos) { m_SunPosition = sunpos; }
+		glm::vec3 GetSunPos() { return m_SunPosition; }
+		glm::vec2 GetWind() { return m_Wind; }
+		void SetWind(glm::vec2& wind) { m_Wind = wind; }
+		float GetAmplitude() { return m_A; }
+		void SetAmplitude(float A) { m_A = A; }
+		uint32_t GetN() { return m_N; }
+
+		// INTERACTIVE FUNCTIONS
+		void TogglePause() { m_Live = !m_Live; }
+		void ToggleNormal() { NORMAL = 1 - NORMAL; }
+		uint32_t X0 = 0, X1 = 0, X2 = 0, Y0 = 0, Y1 = 0, Y2 = 0, Z0 = 0, Z1 = 0, Z2 = 0;
+		uint32_t N0 = 0, N1 = 0, N2 = 0;
 	private:
+		bool m_LightVersion = false;
 		uint32_t BitReverse(uint32_t val, uint32_t N);
 		struct OceanVertex
 		{
 			float x, z;
 		};
-		// TO DO:
-		// set W0 in spectrum_update - frequencies are currently not quantized
-		// glDispatchCompute(..., ..., 1) which size is best? hard-coded as 16 16 in multiple places.
-		// Rate now hard-coded to time = time * 0.05;
-
-		// Upon construction, all the necessary shaders are compiled. 
-		float m_Time = 0;
-		uint32_t m_N = 0;
-		int m_L = 1000;
+		
 		glm::vec2 m_Wind = { 0.0, 0.0 };
-		int m_Windexponent = 6;
+		int m_Windexponent = 2;
 		float m_A = 1.0;
-		bool m_Live = true;
-		float m_Murkiness = 10.0;
-		uint32_t* m_Noise;
-		// Compute shaders and buffers:
-		OceanTexture* buffer;
-		OceanTexture* h0_a;
-		OceanTexture* h0_b;
+		int m_L0 = 300;
+		int m_L1 = 70;
+		int m_L2 = 17;
+		int m_N = 256;
+		float m_Murkiness = 0.0; // rename: transparency
+		float m_Waterlevel = 0.0;
+		float m_Time = 0.0;
+		OceanGeometry* m_SubOcean_0;
+		OceanGeometry* m_SubOcean_1;
+		OceanGeometry* m_SubOcean_2;
+
 		OceanTexture* Butterfly;
-		OceanTexture* h_dx;
-		OceanTexture* h_dy;
-		OceanTexture* h_dz;
-		Ref<Shader> cs_Generate = Shader::Create("assets/shaders/compute/Spectrum_generate.glsl"); 
+		Ref<Shader> cs_Generate = Shader::Create("assets/shaders/compute/Spectrum_generate.glsl");
 		Ref<Shader> cs_Update = Shader::Create("assets/shaders/compute/Spectrum_update.glsl");
 		Ref<Shader> cs_Butterfly = Shader::Create("assets/shaders/compute/ButterflyTexture.glsl");
 		Ref<Shader> cs_FFT = Shader::Create("assets/shaders/compute/FFT.glsl");
 		Ref<Shader> cs_FFT_post = Shader::Create("assets/shaders/compute/FFT_inversionpermutation.glsl");
-		// Rendering shader, buffer, colours, etc.
-		Ref<Shader> m_Shader = Shader::Create("assets/shaders/OceanShader.glsl");
+
+		int N_Gridpoints = 512;
+		float SimulationSize = 1024;
+		float RenderSize = 128;
+		bool m_Live = true;
+		int NORMAL = 0;
+		Ref<Shader> m_ShaderDefault = Shader::Create("assets/shaders/OceanShaderSmooth.glsl");
+		Ref<Shader> m_ShaderLight = Shader::Create("assets/shaders/OceanShaderSmoothLight.glsl");
+		Ref<Shader> m_Shader;
 		Ref<VertexArray> m_VA;
 		OceanVertex* vertices;
 		uint32_t* v_indices;
+
 		uint32_t m_ReflectionTextureID = 0;
 		uint32_t m_RefractionTextureID = 0;
 		uint32_t m_RefractionDepthTextureID = 0;
-		glm::vec3 m_SunPosition = { 20.0, 10.0, 80.0 };
+		uint32_t m_ReflectionDepthTextureID = 0;
+
+		glm::vec3 m_SunPosition = { 1000.0, 2000.0, 0.0 };
 		glm::vec4 c_Emissive = { 0.0, 0.188, 0.258, 1.0 };
-		glm::vec4 c_Ambient = { 0.1, 0.24, 0.25, 1.0 };
+		glm::vec4 c_Ambient = { 0.2, 0.34, 0.45, 1.0 };
 		glm::vec4 c_Diffuse = { 0.15, 0.33, 0.36, 1.0 };
 		glm::vec4 c_Specular = { 1.34, 0.8, 0.4, 1.0 };
 	};

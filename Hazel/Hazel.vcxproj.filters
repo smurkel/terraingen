@@ -78,9 +78,6 @@
     <ClInclude Include="src\Hazel\Core\Timestep.h">
       <Filter>src\Hazel\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Hazel\Entity\Boat.h">
-      <Filter>src\Hazel\Entity</Filter>
-    </ClInclude>
     <ClInclude Include="src\Hazel\Entity\Entity.h">
       <Filter>src\Hazel\Entity</Filter>
     </ClInclude>
@@ -136,9 +133,6 @@
       <Filter>src\Hazel</Filter>
     </ClInclude>
     <ClInclude Include="src\Hazel\Ocean\Ocean.h">
-      <Filter>src\Hazel\Ocean</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Ocean\WaterPhysicsEngine.h">
       <Filter>src\Hazel\Ocean</Filter>
     </ClInclude>
     <ClInclude Include="src\Hazel\Renderer\Buffer.h">
@@ -1346,9 +1340,16 @@
     </ClInclude>
     <ClInclude Include="src\Hazel\Entity\VisibleWorld.h" />
     <ClInclude Include="src\Hazel\Renderer\Framebuffer.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h" />
     <ClInclude Include="src\Hazel\Experimental\Terrain.h" />
     <ClInclude Include="src\Hazel\Experimental\PerlinNoise.h" />
+    <ClInclude Include="src\Hazel\Entity\Island.h" />
+    <ClInclude Include="src\Hazel\Experimental\Landscape.h" />
+    <ClInclude Include="src\Hazel\Experimental\Isle.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Ocean\WaterPhysicsEngine.h" />
+    <ClInclude Include="src\Hazel\Entity\Boat.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Hazel\Application.cpp">
@@ -1356,9 +1357,6 @@
     </ClCompile>
     <ClCompile Include="src\Hazel\CameraController.cpp">
       <Filter>src\Hazel</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hazel\Entity\Boat.cpp">
-      <Filter>src\Hazel\Entity</Filter>
     </ClCompile>
     <ClCompile Include="src\Hazel\Entity\Entity.cpp">
       <Filter>src\Hazel\Entity</Filter>
@@ -1394,9 +1392,6 @@
       <Filter>src\Hazel\Math</Filter>
     </ClCompile>
     <ClCompile Include="src\Hazel\Ocean\Ocean.cpp">
-      <Filter>src\Hazel\Ocean</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hazel\Ocean\WaterPhysicsEngine.cpp">
       <Filter>src\Hazel\Ocean</Filter>
     </ClCompile>
     <ClCompile Include="src\Hazel\Renderer\Buffer.cpp">
@@ -1455,7 +1450,14 @@
     </ClCompile>
     <ClCompile Include="src\Hazel\Entity\VisibleWorld.cpp" />
     <ClCompile Include="src\Hazel\Renderer\Framebuffer.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp" />
     <ClCompile Include="src\Hazel\Experimental\Terrain.cpp" />
+    <ClCompile Include="src\Hazel\Entity\Island.cpp" />
+    <ClCompile Include="src\Hazel\Experimental\Landscape.cpp" />
+    <ClCompile Include="src\Hazel\Experimental\Isle.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Hazel\Ocean\WaterPhysicsEngine.cpp" />
+    <ClCompile Include="src\Hazel\Entity\Boat.cpp" />
   </ItemGroup>
 </Project>

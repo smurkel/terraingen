@@ -7,7 +7,7 @@ namespace Hazel {
 	class Camera
 	{
 	public:
-		Camera(float fov_angle = 45.0f, float aspectratio= 1200.0f/720.0f, float z_near = 0.1f, float z_far = 500.0f);
+		Camera(float fov_angle = 45.0f, float aspectratio= 1200.0f/720.0f, float z_near = 0.1f, float z_far = 1000.0f);
 		
 		void SetPosition(glm::vec3& position) { m_Position = position; RecalculateViewMatrix(); }
 		void SetFocus(glm::vec3& focus) { m_Focus = focus; }
@@ -23,6 +23,7 @@ namespace Hazel {
 				m_Position.x* std::cos(glm::radians(m_Position.z)),
 				std::sin(glm::radians(m_Position.y)) * m_Position.x * std::sin(glm::radians(m_Position.z)),
 			};
+			pos += m_Focus;
 			return pos;
 		}
 		const float GetZNear() { return z_Near; }

@@ -36,60 +36,78 @@ complex add(complex c0, complex c1)
 void horizontalButterflies ()
 { 
 	complex H;
+	complex G;
 	ivec2 x = ivec2(gl_GlobalInvocationID.xy);
 	if (pingpong == 0)
 	{ 
 		vec4 data = imageLoad(butterflyTexture, ivec2 (stage, x.x)).rgba;
-		vec2 p_ = imageLoad(pingpong0, ivec2 (data.z, x.y)).rg;
-		vec2 q_ = imageLoad(pingpong0, ivec2 (data.w, x.y)).rg;
+		vec4 p_ = imageLoad(pingpong0, ivec2 (data.z, x.y)).rgba;
+		vec4 q_ = imageLoad(pingpong0, ivec2 (data.w, x.y)).rgba;
 		vec2 w_ = vec2(data.x, data.y);
 		complex p = complex(p_.x,p_.y);
 		complex q = complex(q_.x,q_.y);
 		complex w = complex(w_.x,w_.y);
 		H = add(p,mul(w,q));
-		imageStore(pingpong1, x, vec4(H.real, H.im, 0,	1));
+		// REPEAT FOR BLUE AND ALPHA CHANNEL //
+		p = complex(p_.z, p_.w);
+		q = complex(q_.z, q_.w);
+		G = add(p, mul(w, q));
+		imageStore(pingpong1, x, vec4(H.real, H.im, G.real,	G.im));
 	}
 	else if (pingpong == 1)
 	{ 
 		vec4 data = imageLoad(butterflyTexture, ivec2 (stage, x.x)).rgba;
-		vec2 p_ = imageLoad(pingpong1, ivec2 (data.z, x.y)).rg;
-		vec2 q_ = imageLoad(pingpong1, ivec2 (data.w, x.y)).rg;
+		vec4 p_ = imageLoad(pingpong1, ivec2 (data.z, x.y)).rgba;
+		vec4 q_ = imageLoad(pingpong1, ivec2 (data.w, x.y)).rgba;
 		vec2 w_ = vec2(data.x, data.y);
 		complex p = complex(p_.x,p_.y);
 		complex q = complex(q_.x,q_.y);
 		complex w = complex(w_.x,w_.y);
 		H = add(p,mul(w,q));
-		imageStore(pingpong0, x, vec4(H.real, H.im, 0,	1));
+		// REPEAT FOR BLUE AND ALPHA CHANNEL //
+		p = complex(p_.z, p_.w);
+		q = complex(q_.z, q_.w);
+		G = add(p, mul(w, q));
+		imageStore(pingpong0, x, vec4(H.real, H.im, G.real,	G.im));
 	}
 }
 
 void verticalButterflies ()
 { 
 	complex H;
+	complex G;
 	ivec2 x = ivec2(gl_GlobalInvocationID.xy);
 	if (pingpong == 0)
 	{ 
 		vec4 data = imageLoad(butterflyTexture, ivec2 (stage, x.y)).rgba;
-		vec2 p_ = imageLoad(pingpong0, ivec2 (x.x, data.z)).rg;
-		vec2 q_ = imageLoad(pingpong0, ivec2 (x.x, data.w)).rg;
+		vec4 p_ = imageLoad(pingpong0, ivec2 (x.x, data.z)).rgba;
+		vec4 q_ = imageLoad(pingpong0, ivec2 (x.x, data.w)).rgba;
 		vec2 w_ = vec2(data.x, data.y);
 		complex p = complex(p_.x,p_.y);
 		complex q = complex(q_.x,q_.y);
 		complex w = complex(w_.x,w_.y);
 		H = add(p,mul(w,q));
-		imageStore(pingpong1, x, vec4(H.real, H.im, 0,	1));
+		// REPEAT FOR BLUE AND ALPHA CHANNEL //
+		p = complex(p_.z, p_.w);
+		q = complex(q_.z, q_.w);
+		G = add(p, mul(w, q));
+		imageStore(pingpong1, x, vec4(H.real, H.im, G.real,	G.im));
 	}
 	else if (pingpong == 1)
 	{ 
 		vec4 data = imageLoad(butterflyTexture, ivec2 (stage, x.y)).rgba;
-		vec2 p_ = imageLoad(pingpong1, ivec2 (x.x, data.z)).rg;
-		vec2 q_ = imageLoad(pingpong1, ivec2 (x.x, data.w)).rg;
+		vec4 p_ = imageLoad(pingpong1, ivec2 (x.x, data.z)).rgba;
+		vec4 q_ = imageLoad(pingpong1, ivec2 (x.x, data.w)).rgba;
 		vec2 w_ = vec2(data.x, data.y);
 		complex p = complex(p_.x,p_.y);
 		complex q = complex(q_.x,q_.y);
 		complex w = complex(w_.x,w_.y);
 		H = add(p,mul(w,q));
-		imageStore(pingpong0, x, vec4(H.real, H.im, 0,	1));
+		// REPEAT FOR BLUE AND ALPHA CHANNEL //
+		p = complex(p_.z, p_.w);
+		q = complex(q_.z, q_.w);
+		G = add(p, mul(w, q));
+		imageStore(pingpong0, x, vec4(H.real, H.im, G.real,	G.im));
 	}
 }
 

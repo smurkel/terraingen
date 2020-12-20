@@ -55,10 +55,12 @@ namespace Hazel {
 		glViewport(0, 0, m_Specification.Width, m_Specification.Height);
 	}
 
-	void OpenGLFramebuffer::Unbind(int width, int height)
+	void OpenGLFramebuffer::Unbind()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glViewport(0, 0, width, height);
+		int* windowsize = new int[4];
+		glGetIntegerv(GL_VIEWPORT, windowsize);
+		glViewport(0, 0, windowsize[2], windowsize[3]);
 	}
 
 }

@@ -9,12 +9,15 @@
     <ClInclude Include="src\Environments\TestEnvironment.h">
       <Filter>Environments</Filter>
     </ClInclude>
+    <ClInclude Include="assets\shaders\TerrainShader2.glsl" />
+    <ClInclude Include="src\Environments\TerrainTests.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Environments\TestEnvironment.cpp">
       <Filter>Environments</Filter>
     </ClCompile>
     <ClCompile Include="src\SandboxApp.cpp" />
+    <ClCompile Include="src\Environments\TerrainTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\Texture.glsl" />
@@ -31,5 +34,14 @@
     <None Include="assets\shaders\TerrainShader.glsl" />
     <None Include="assets\shaders\compute\Erosion.glsl" />
     <None Include="assets\shaders\compute\GaussianBlur.glsl" />
+    <None Include="assets\shaders\compute\Erosion2.glsl" />
+    <None Include="assets\shaders\OceanShaderSmooth.glsl" />
+    <None Include="assets\shaders\LandscapeShader.glsl" />
+    <None Include="assets\shaders\LandscapeErosion.glsl" />
+    <None Include="assets\shaders\IsleShader.glsl" />
+    <None Include="assets\shaders\HeightMapShadowMapper.glsl" />
+    <None Include="assets\shaders\HeightMapShadowSampler.glsl" />
+    <None Include="assets\shaders\IsleShaderNoGeometry.glsl" />
+    <None Include="assets\shaders\OceanShaderSmoothLight.glsl" />
   </ItemGroup>
 </Project>
