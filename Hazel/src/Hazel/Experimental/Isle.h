@@ -101,20 +101,22 @@ namespace Hazel
 		//		coral
 		void _growth_coral();
 		void _growth_pixel_coral(glm::ivec2 P);
+		// rendering
+		void _upload_colours();
 	public:
 		// parameters:
 		int p_N = 256;
 		float p_Scale = 1.0;
-		float p_Height = 45;
-		float p_Cellsize = 1.0;
+		float p_Height = 23;
+		float p_Cellsize = 0.5;
 
 		// erosion parameters
-		glm::vec4 SOIL_HEALTH = glm::vec4(0.8, 1.0, 0.5, 0.6);
+		glm::vec4 SOIL_HEALTH = glm::vec4(1.8, 1.0, 0.5, 0.6);
 		glm::vec4 SEDIMENTATION_RATE = glm::vec4(0.05, 0.15, 0.05, 0.05);
 		int MAX_STEPS = 64;
 		int RADIUS = 5;
 		float MINSLOPE = 0.01;
-		float INERTIA = 0.8;
+		float INERTIA = 0.3;
 		float EROSION_RATE = 0.5;
 		float DEPOSITION_RATE = 0.3;
 		float GRAVITY = 10.0;
@@ -139,8 +141,9 @@ namespace Hazel
 		float SOIL_OPEN_DRYING_RATE = 0.4;
 		// land slides
 		glm::vec4 GRAV_FRICTION_ANGLE = { 30.0f, 40.0f, 12.0f, 25.0f }; 
+		float GRAV_FRICTION_ANGLE_UNDERWATER_MULTIPLIER = 1.6;
 		float GRAV_FRAC_MIN = 0.7;
-		float GRAV_FRAC_MAX = 0.9;;
+		float GRAV_FRAC_MAX = 0.9;
 		// thermal erosion
 		float THERMAL_EROSION_TEMP_SCALE = 1 / 20.0; // units: 1/Celsius
 		float THERMAL_EROSION_VEGETATION_PROTECT_SCALE = 1.0; // units: 1/PlantCover
@@ -220,6 +223,16 @@ namespace Hazel
 		float* normalmap;
 		bool _isOnGPU = false;
 		IsleTexture* m_BlurBuffer;
+
+		// colours
+		glm::vec4 terrainColorG = glm::vec4(153.0 / 255.0, 143.0 / 255.0, 112.0 / 255.0, 1.0);
+		glm::vec4 terrainColorR = glm::vec4(161.0 / 255.0, 157.0 / 255.0, 145.0 / 255.0, 1.0);
+		glm::vec4 terrainColorB = glm::vec4(232.0 / 255.0, 231.0 / 255.0, 195.0 / 255.0, 1.0);
+		glm::vec4 terrainColorA = glm::vec4(92.0 / 255.0, 58.0 / 255.0, 4.0 / 255.0, 1.0);
+		glm::vec4 plantColorR = glm::vec4(27.0 / 255.0, 92.0 / 255.0, 4.0 / 255.0, 1.0);
+		glm::vec4 plantColorG = glm::vec4(60.0 / 255.0, 147.0 / 255.0, 52.0 / 255.0, 1.0);
+		glm::vec4 plantColorB = glm::vec4(110.0 / 255.0, 168.0 / 255.0, 71.0 / 255.0, 1.0);
+		glm::vec4 plantColorA = glm::vec4(90.0 / 255.0, 112.0 / 255.0, 90.0 / 255.0, 1.0);
 	private:
 		// for rendering:
 		glm::vec2* m_Vertices;

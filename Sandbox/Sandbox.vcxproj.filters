@@ -43,5 +43,6 @@
     <None Include="assets\shaders\HeightMapShadowSampler.glsl" />
     <None Include="assets\shaders\IsleShaderNoGeometry.glsl" />
     <None Include="assets\shaders\OceanShaderSmoothLight.glsl" />
+    <None Include="assets\shaders\SkyBoxShader.glsl" />
   </ItemGroup>
 </Project>

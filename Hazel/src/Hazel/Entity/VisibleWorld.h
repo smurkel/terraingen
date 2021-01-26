@@ -4,6 +4,7 @@
 #include "Hazel/Ocean/Ocean.h"
 #include "Hazel/Experimental/Terrain.h"
 #include "Hazel/Experimental/Isle.h"
+#include "Hazel/Experimental/Skybox.h"
 #include "Hazel/Renderer/Framebuffer.h"
 
 namespace Hazel
@@ -64,8 +65,9 @@ namespace Hazel
 			m_Ocean->SetRefractionDepthTextureID(m_WaterRendererWrapper.GetRefractionDepthTextureID());
 			m_Ocean->SetSunPos(m_Weather.SunPosition);
 		}
-
+		void ToggleSkyboxActive() { m_Skybox_active = !m_Skybox_active; }
 		void SetCamera(Camera& camera) { m_Camera = camera; }
+
 		void Render();
 
 		uint32_t GetReflectionImage() { return m_WaterRendererWrapper.GetReflectionTextureID(); }
@@ -82,6 +84,10 @@ namespace Hazel
 		Hazel::Ocean* m_Ocean = nullptr;
 		Hazel::Isle* m_Isle = nullptr;
 		EntityStack m_EntityStack;
+
+		// skybox
+		Hazel::Skybox m_Skybox;
+		bool m_Skybox_active = false;
 	private:
 		void RenderEntities();
 		WaterRendererWrapper m_WaterRendererWrapper = WaterRendererWrapper();

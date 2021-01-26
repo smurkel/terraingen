@@ -158,6 +158,7 @@
     <ClInclude Include="src\Hazel\Events\MouseEvent.h" />
     <ClInclude Include="src\Hazel\Experimental\Isle.h" />
     <ClInclude Include="src\Hazel\Experimental\PerlinNoise.h" />
+    <ClInclude Include="src\Hazel\Experimental\Skybox.h" />
     <ClInclude Include="src\Hazel\Experimental\Terrain.h" />
     <ClInclude Include="src\Hazel\Experimental\Landscape.h" />
     <ClInclude Include="src\Hazel\Hazel.h" />
@@ -587,6 +588,7 @@
     <ClCompile Include="src\Hazel\Entity\RigidBody.cpp" />
     <ClCompile Include="src\Hazel\Entity\VisibleWorld.cpp" />
     <ClCompile Include="src\Hazel\Experimental\Isle.cpp" />
+    <ClCompile Include="src\Hazel\Experimental\Skybox.cpp" />
     <ClCompile Include="src\Hazel\Experimental\Terrain.cpp" />
     <ClCompile Include="src\Hazel\Experimental\Landscape.cpp" />
     <ClCompile Include="src\Hazel\ImGui\ImGuiBuild.cpp" />

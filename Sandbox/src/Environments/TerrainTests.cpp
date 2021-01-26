@@ -6,10 +6,11 @@ TerrainTests::TerrainTests()
 {
 	m_VisibleWorld.AddIsle(&m_Isle);
 	//m_Isle.Sunlight();
-
-	m_Ocean.Generate(1.0, glm::vec2(7.0, 7.0), 1, true);
-	//m_Ocean.SetWaterlevel(m_Isle.WATERLEVEL - m_Isle.p_Height);
-	m_Ocean.SetMurkiness(2.0);
+	m_VisibleWorld.m_Skybox.SetCubemap(0);
+	m_VisibleWorld.m_Skybox.SetShader(m_Library.GetShader("assets/shaders/SkyBoxShader.glsl"));
+	m_Ocean.Generate(1.0, glm::vec2(7.0, 7.0), 3);
+	m_Isle.WATERLEVEL = m_Isle.p_Height;
+	//m_Ocean.SetMurkiness(2.0);
 	m_VisibleWorld.SetOcean(&m_Ocean);
 	
 	m_VisibleWorld.SetCamera(m_CameraController.GetCamera());
@@ -27,8 +28,9 @@ void TerrainTests::OnUpdate(Hazel::Timestep ts)
 
 void TerrainTests::OnImGuiRender()
 {
-	OceanImGuiSettings();
+	RenderingImGuiSettings();
 	IsleImGuiSettings();
+	SimulationImGuiSettings();
 }
 
 void TerrainTests::OnEvent(Hazel::Event& e)
@@ -48,6 +50,8 @@ bool TerrainTests::OnKeyPressed(Hazel::KeyPressedEvent& e)
 		m_Isle.WATERLEVEL += 3.0;
 	if (e.GetKeyCode() == HZ_KEY_S)
 		m_Isle.WATERLEVEL -= 3.0;
+	if (e.GetKeyCode() == HZ_KEY_A)
+		m_VisibleWorld.ToggleSkyboxActive();
 	//if (e.GetKeyCode() == HZ_KEY_SPACE)
 	//	m_Isle.Erode();
 	//if (e.GetKeyCode() == HZ_KEY_B)
@@ -83,10 +87,10 @@ bool TerrainTests::OnKeyPressed(Hazel::KeyPressedEvent& e)
 	//		m_Isle.Dry();
 	//	}
 	//}
-	//if (e.GetKeyCode() == HZ_KEY_LEFT)
-	//	m_Isle.SwitchDown();
-	//if (e.GetKeyCode() == HZ_KEY_RIGHT)
-	//	m_Isle.SwitchUp();
+	if (e.GetKeyCode() == HZ_KEY_LEFT)
+		m_Isle.SwitchDown();
+	if (e.GetKeyCode() == HZ_KEY_RIGHT)
+		m_Isle.SwitchUp();
 	//if (e.GetKeyCode() == HZ_KEY_D)
 	//{
 	//	m_Isle.Dry();
@@ -161,24 +165,35 @@ bool TerrainTests::OnKeyPressed(Hazel::KeyPressedEvent& e)
 	return true;
 }
 
-void TerrainTests::OceanImGuiSettings()
+void TerrainTests::RenderingImGuiSettings()
 {
-	ImGui::Begin("Ocean settings");
+	ImGui::Begin("Render settings");
+	ImGui::ColorEdit4("Soiltype: bedrock", &m_Isle.terrainColorR.r);
+	ImGui::ColorEdit4("Soiltype: gravel", &m_Isle.terrainColorG.r);
+	ImGui::ColorEdit4("Soiltype: sand", &m_Isle.terrainColorB.r);
+	ImGui::ColorEdit4("Soiltype: humus", &m_Isle.terrainColorA.r);
+	ImGui::ColorEdit4("Plant species 1 (tree)", &m_Isle.plantColorR.r);
+	ImGui::ColorEdit4("Plant species 2 (shrub)", &m_Isle.plantColorG.r);
+	ImGui::ColorEdit4("Plant species 3 (grass)", &m_Isle.plantColorB.r);
+	ImGui::ColorEdit4("Plant species 4 (lichen)", &m_Isle.plantColorA.r);
 	float Transparency = m_Ocean.GetMurkiness();
 	ImGui::SliderFloat("Water clarity", &Transparency, 0.0, 50.0);
 	m_Ocean.SetMurkiness(Transparency);
-	glm::vec4 cE = m_Ocean.GetColorVec4(0);
+	float _size = m_Ocean.GetSimulationSize();
+	ImGui::SliderFloat("Ocean scale", &_size, 10.0, 5000.0);
+	m_Ocean.SetSimulationSize(_size);
+	//glm::vec4 cE = m_Ocean.GetColorVec4(0);
 	glm::vec4 cA = m_Ocean.GetColorVec4(1);
 	glm::vec4 cD = m_Ocean.GetColorVec4(2);
-	glm::vec4 cS = m_Ocean.GetColorVec4(3);
-	ImGui::ColorPicker4("Emissive colour", &cE.r);
-	ImGui::ColorPicker4("Ambient colour", &cA.r);
-	ImGui::ColorPicker4("Diffuse colour", &cD.r);
-	ImGui::ColorPicker4("Specular colour", &cS.r);
-	m_Ocean.SetColorVec4(0, cE);
+	//glm::vec4 cS = m_Ocean.GetColorVec4(3);
+	//ImGui::ColorEdit4("Emissive colour", &cE.r);
+	ImGui::ColorEdit4("Ambient water colour", &cA.r);
+	ImGui::ColorEdit4("Diffuse water colour", &cD.r);
+	//ImGui::ColorEdit4("Specular colour", &cS.r);
+	//m_Ocean.SetColorVec4(0, cE);
 	m_Ocean.SetColorVec4(1, cA);
 	m_Ocean.SetColorVec4(2, cD);
-	m_Ocean.SetColorVec4(3, cS); 
+	//m_Ocean.SetColorVec4(3, cS);
 	ImGui::End();
 }
 
@@ -215,5 +230,67 @@ void TerrainTests::IsleImGuiSettings()
 	if (ImGui::Button("Export")) m_Isle.Export();
 	
 	ImGui::End();
+
+}
+
+void TerrainTests::SimulationImGuiSettings()
+{
+	ImGui::Begin("Simulation settings");
+	ImGui::Text("Erosion settings");
+	ImGui::SliderFloat("Inertia", &m_Isle.INERTIA, 0.0, 1.0);
+	ImGui::SliderFloat("Erosion rate", &m_Isle.EROSION_RATE, 0.0, 1.0);
+	ImGui::SliderFloat("Deposition rate", &m_Isle.DEPOSITION_RATE, 0.0, 1.0);
+	ImGui::SliderFloat("Deposition rate underwater", &m_Isle.DEPOSIT_UNDERWATER, 0.0, 1.0);
+	ImGui::SliderFloat("Gravity", &m_Isle.GRAVITY, 0.0, 20.0);
+	ImGui::SliderFloat("Evaporation", &m_Isle.EVAPORATION_COEFFICIENT, 0.0, 1.0);
+	ImGui::SliderFloat("Rock->Pebble degradation", &m_Isle.SOIL_DEGRADATION_RG, 0.0, 1.0);
+	ImGui::SliderFloat("Rock -> Sand degradation", &m_Isle.SOIL_DEGRADATION_RB, 0.0, (1.0 - m_Isle.SOIL_DEGRADATION_RG));
+	ImGui::SliderFloat("Pebble->Sand degradation", &m_Isle.SOIL_DEGRADATION_GB, 0.0, 1.0);
+	ImGui::InputFloat4("Type hardness", &m_Isle.SOIL_HEALTH.r, 2);
+	ImGui::InputFloat4("Type sedimentation rate", &m_Isle.SEDIMENTATION_RATE.r, 2);
+	ImGui::InputFloat4("Erosion max layer fraction", &m_Isle.SOIL_ERODE_MAX_LAYER_FRAC.r, 2);
+	if (ImGui::Button("Erosion iteration")) m_Isle.Erode();
+	ImGui::Text("Landslide settings");
+	ImGui::InputFloat4("Friction angles", &m_Isle.GRAV_FRICTION_ANGLE.r, 1);
+	ImGui::SliderFloat("Underwater friction angle multiplier", &m_Isle.GRAV_FRICTION_ANGLE_UNDERWATER_MULTIPLIER, 0.0, 3.0);
+	ImGui::SliderFloat("Min layer fraction", &m_Isle.GRAV_FRAC_MIN, 0.0, 1.0);
+	ImGui::SliderFloat("Max layer fraction", &m_Isle.GRAV_FRAC_MAX, m_Isle.GRAV_FRAC_MIN, 1.0);
+	if (ImGui::Button("Landslide iteration")) m_Isle.Slide();
+	ImGui::Text("Vegatation settings");
+	ImGui::InputFloat4("Type max population", &m_Isle.PL_MAX_POP.r, 2);
+	ImGui::InputFloat("Max total population", &m_Isle.PL_MAX_POP_TOTAL, 0.1, 0.5);
+	ImGui::InputFloat4("Type max age", &m_Isle.PL_MAX_AGE.r, 2);
+	ImGui::InputFloat4("Type growth rate", &m_Isle.PL_TYPE_GROWTH_RATE.r, 2);
+	ImGui::InputFloat4("Type gradient ideal", &m_Isle.PL_GRADIENT_IDEAL.r, 2);
+	ImGui::InputFloat4("Type gradient range", &m_Isle.PL_GRADIENT_RANGE.r, 2);
+	ImGui::InputFloat4("Type humidity ideal", &m_Isle.PL_HUMIDITY_IDEAL.r, 2);
+	ImGui::InputFloat4("Type humidity range", &m_Isle.PL_HUMIDITY_RANGE.r, 2);
+	ImGui::InputFloat4("Type humus yield", &m_Isle.PL_HUMUS_PROD.r, 2);
+	ImGui::InputFloat4("Type fertility minimum", &m_Isle.PL_HUMUS_MIN.r, 2);
+	ImGui::InputFloat4("Type fertility bonus", &m_Isle.PL_HUMUS_GROWTH_SPONSOR.r, 2);
+	ImGui::SliderFloat("Base death rate", &m_Isle.PL_DEATH_RATE, 0.0, 1.0);
+	ImGui::SliderFloat("Base growth rate", &m_Isle.PL_GROWTH_RATE, 0.0, 1.0);
+	ImGui::SliderFloat("Base aging rate", &m_Isle.PL_AGE_RATE, 0.0, 1.0);
+	ImGui::SliderFloat("Overgrowth attrition", &m_Isle.PL_OVERGROWTH_ATTRITION, 0.0, 1.0);
+	ImGui::SliderFloat("Humus decay rate", &m_Isle.HUMUS_DECAY_RATE, 0.0, 1.0);
+	ImGui::InputFloat3("Underwater humus petrification product", &m_Isle.HUMUS_UNDERWATER_PETRIFY_SOIL.r, 2);
+	if (ImGui::Button("Vegetation iteration")) m_Isle.Grow();
+	ImGui::Text("Vegetation - erosion interactions");
+	ImGui::InputFloat4("Erosion damping", &m_Isle.PL_SOIL_PROTECT_FAC.r, 2);
+	ImGui::InputFloat4("Deposition increase", &m_Isle.PL_SOIL_DEPOSIT_FAC.r, 2);
+	ImGui::InputFloat4("Moisture absorption rate", &m_Isle.PL_INITIAL_MOISTURE_ABSORB.r, 2);
+	ImGui::Text("Ocean settings");
+	ImGui::SliderFloat("Water level", &m_Isle.WATERLEVEL, -m_Isle.p_Height, m_Isle.p_Height);
+	ImGui::SliderFloat("Coral gradient ideal", &m_Isle.CORAL_GRADIENT_IDEAL, 0.0, 90.0);
+	ImGui::SliderFloat("Coral gradient range", &m_Isle.CORAL_GRADIENT_RANGE, 0.0, 90.0);
+	ImGui::SliderFloat("Coral depth ideal", &m_Isle.CORAL_DEPTH_IDEAL, 0.0, 20.0);
+	ImGui::SliderFloat("Coral depth max", &m_Isle.CORAL_DEPTH_MAX, m_Isle.CORAL_DEPTH_IDEAL, 100.0);
+	ImGui::SliderFloat("Coral depth min", &m_Isle.CORAL_DEPTH_MIN, 0.0, m_Isle.CORAL_DEPTH_IDEAL);
+	ImGui::SliderFloat("Coral base growth", &m_Isle.CORAL_BASE_GROWTH, 0.0, 5.0);
+	ImGui::SliderFloat("Coral max growth rate", &m_Isle.CORAL_GROWTH_MAX, 0.0, 1.0);
+	ImGui::InputFloat4("Coral soiltype", &m_Isle.CORAL_SOILTYPE.r, 2);
+	if (ImGui::Button("Coral iteration")) m_Isle.Coral();
+	ImGui::End();
+	
 
 }

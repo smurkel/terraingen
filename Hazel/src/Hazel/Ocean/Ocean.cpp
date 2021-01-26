@@ -514,8 +514,7 @@ namespace Hazel
 		std::dynamic_pointer_cast<OpenGLShader>(m_Shader)->UploadUniformFloat4("C_Diffuse", c_Diffuse);
 		std::dynamic_pointer_cast<OpenGLShader>(m_Shader)->UploadUniformFloat4("C_Specular", c_Specular);
 		std::dynamic_pointer_cast<OpenGLShader>(m_Shader)->UploadUniformFloat("u_Murkiness", m_Murkiness);
-		std::dynamic_pointer_cast<OpenGLShader>(m_Shader)->UploadUniformMat4("u_ViewMatrix", camera.GetViewMatrix());
-		std::dynamic_pointer_cast<OpenGLShader>(m_Shader)->UploadUniformMat4("u_ProjectionMatrix", camera.GetProjectionMatrix());
+		std::dynamic_pointer_cast<OpenGLShader>(m_Shader)->UploadUniformMat4("u_ViewProjectionMatrix", camera.GetViewProjectionMatrix());
 		std::dynamic_pointer_cast<OpenGLShader>(m_Shader)->UploadUniformFloat("z_Near", camera.GetZNear());
 		std::dynamic_pointer_cast<OpenGLShader>(m_Shader)->UploadUniformFloat("z_Far", camera.GetZFar());
 		glm::vec3 viewPosition = camera.GetPositionXYZ();

@@ -1350,6 +1350,7 @@
     </ClInclude>
     <ClInclude Include="src\Hazel\Ocean\WaterPhysicsEngine.h" />
     <ClInclude Include="src\Hazel\Entity\Boat.h" />
+    <ClInclude Include="src\Hazel\Experimental\Skybox.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Hazel\Application.cpp">
@@ -1459,5 +1460,6 @@
     </ClCompile>
     <ClCompile Include="src\Hazel\Ocean\WaterPhysicsEngine.cpp" />
     <ClCompile Include="src\Hazel\Entity\Boat.cpp" />
+    <ClCompile Include="src\Hazel\Experimental\Skybox.cpp" />
   </ItemGroup>
 </Project>

@@ -98,6 +98,14 @@ uniform float waterlevel;
 
 uniform int _Switcher;
 
+uniform vec4 terrainColorR;
+uniform vec4 terrainColorG;
+uniform vec4 terrainColorB;
+uniform vec4 terrainColorA;
+uniform vec4 plantColorR;
+uniform vec4 plantColorG;
+uniform vec4 plantColorB;
+uniform vec4 plantColorA;
 
 void main()
 {
@@ -107,20 +115,11 @@ void main()
 	if (_Switcher == 0)
 	{
 		// TERRAIN W PLANT
-		vec4 terrainColorG = vec4(153.0 / 255.0, 143.0 / 255.0, 112.0 / 255.0, 1.0);
-		vec4 terrainColorR = vec4(161.0 / 255.0, 157.0 / 255.0, 145.0 / 255.0, 1.0);
-		vec4 terrainColorB = vec4(232.0 / 255.0, 231.0 / 255.0, 195.0 / 255.0, 1.0);
-		vec4 terrainColorA = vec4(92.0 / 255.0,  58.0 / 255.0,  4.0/255.0, 1.0);
 		terrainColor = mix(terrainColorR, terrainColorG, clamp(f_Terrain.g / 0.05, 0.0, 1.0));
 		terrainColor = mix(terrainColor, terrainColorB, clamp(f_Terrain.b / 0.1, 0.0, 1.0));
 		terrainColor = mix(terrainColor, terrainColorA, clamp(f_Terrain.a / 0.5, 0.0, 1.0));
 
-
 		vec4 plant = texture(plantMap, f_UV);
-		vec4 plantColorR = vec4(27.0 / 255.0, 92.0 / 255.0, 4.0 / 255.0, 1.0);
-		vec4 plantColorG = vec4(60.0 / 255.0, 147.0 / 255.0, 52.0 / 255.0, 1.0);
-		vec4 plantColorB = vec4(110.0 / 255.0, 168.0 / 255.0, 71.0 / 255.0, 1.0);
-		vec4 plantColorA = vec4(90.0 / 255.0, 112.0 / 255.0, 90.0 / 255.0, 1.0);
 		vec4 plantColor = mix(plantColorA, plantColorG, clamp(plant.g / 0.1, 0.0, 1.0));
 		plantColor = mix(plantColor, plantColorB, clamp(plant.b / 0.7, 0.0, 1.0));
 		plantColor = mix(plantColor, plantColorR, clamp(plant.r / 0.1, 0.0, 1.0));

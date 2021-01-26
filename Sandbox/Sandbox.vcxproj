@@ -167,6 +167,7 @@
     <None Include="assets\shaders\SeaShaderGeometry.glsl" />
     <None Include="assets\shaders\SeaShaderSmooth.glsl" />
     <None Include="assets\shaders\HeightMapShadowMapper.glsl" />
+    <None Include="assets\shaders\SkyBoxShader.glsl" />
     <None Include="assets\shaders\TerrainShader.glsl" />
     <None Include="assets\shaders\Texture.glsl" />
   </ItemGroup>

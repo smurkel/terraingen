@@ -15,7 +15,6 @@ public:
 	void OnEvent(Hazel::Event& e) override;
 private:
 	bool OnKeyPressed(Hazel::KeyPressedEvent& e);
-	void OceanImGuiSettings();
 	
 	Hazel::CameraController m_CameraController;
 	Hazel::Library m_Library;
@@ -26,6 +25,8 @@ private:
 	Hazel::VisibleWorld m_VisibleWorld;
 	// isle imgui settings
 	void IsleImGuiSettings();
+	void SimulationImGuiSettings();
+	void RenderingImGuiSettings();
 	bool toggleCoral = false;
 	bool toggleDry = false;
 	bool toggleErode = false;

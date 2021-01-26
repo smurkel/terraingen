@@ -116,6 +116,8 @@ namespace Hazel
 		float GetAmplitude() { return m_A; }
 		void SetAmplitude(float A) { m_A = A; }
 		uint32_t GetN() { return m_N; }
+		void SetSimulationSize(float size) { SimulationSize = size; }
+		float GetSimulationSize() { return SimulationSize; }
 
 		// INTERACTIVE FUNCTIONS
 		void TogglePause() { m_Live = !m_Live; }
@@ -131,13 +133,13 @@ namespace Hazel
 		};
 		
 		glm::vec2 m_Wind = { 0.0, 0.0 };
-		int m_Windexponent = 2;
+		int m_Windexponent = 4;
 		float m_A = 1.0;
-		int m_L0 = 300;
-		int m_L1 = 70;
+		int m_L0 = 723;
+		int m_L1 = 36;
 		int m_L2 = 17;
 		int m_N = 256;
-		float m_Murkiness = 0.0; // rename: transparency
+		float m_Murkiness = 5.0; // rename: transparency
 		float m_Waterlevel = 0.0;
 		float m_Time = 0.0;
 		OceanGeometry* m_SubOcean_0;
@@ -151,9 +153,9 @@ namespace Hazel
 		Ref<Shader> cs_FFT = Shader::Create("assets/shaders/compute/FFT.glsl");
 		Ref<Shader> cs_FFT_post = Shader::Create("assets/shaders/compute/FFT_inversionpermutation.glsl");
 
-		int N_Gridpoints = 512;
-		float SimulationSize = 1024;
-		float RenderSize = 128;
+		int N_Gridpoints = 256; // Resolution of the mesh onto which the ocean is rendered.
+		float SimulationSize = 1024; // Size of the seascape that is contained within the render plane (larger = more repetitions of the underlying geometry textures)
+		float RenderSize = 128; // On-screen size of the plane in which water is rendered
 		bool m_Live = true;
 		int NORMAL = 0;
 		Ref<Shader> m_ShaderDefault = Shader::Create("assets/shaders/OceanShaderSmooth.glsl");
@@ -169,10 +171,10 @@ namespace Hazel
 		uint32_t m_ReflectionDepthTextureID = 0;
 
 		glm::vec3 m_SunPosition = { 1000.0, 2000.0, 0.0 };
-		glm::vec4 c_Emissive = { 0.0, 0.188, 0.258, 1.0 };
-		glm::vec4 c_Ambient = { 0.2, 0.34, 0.45, 1.0 };
-		glm::vec4 c_Diffuse = { 0.15, 0.33, 0.36, 1.0 };
-		glm::vec4 c_Specular = { 1.34, 0.8, 0.4, 1.0 };
+		glm::vec4 c_Emissive = { 255.0 / 255.0, 255.0 / 255.0, 255.0 / 255.0, 255.0 / 255.0} ;
+		glm::vec4 c_Ambient = { 1.0 / 255.0, 18.0 / 255.0, 33.0 / 255.0, 255.0 / 255.0 };
+		glm::vec4 c_Diffuse = { 30.0 / 255.0, 58.0 / 255.0, 78.0 / 255.0, 255.0 / 255.0 };
+		glm::vec4 c_Specular = { 103.0 / 255.0, 103.0 / 255.0, 103.0 / 255.0, 255.0 / 255.0 };
 	};
 
 	

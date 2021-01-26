@@ -34,7 +34,7 @@ namespace Hazel {
 
 		float m_CameraMinZoom = 400.0f;
 		float m_CameraMaxZoom = 1.0f;
-		float m_CameraMaxPolar = 90.0;
+		float m_CameraMaxPolar = 160.0;
 		float m_CameraMinPolar = 15.0;
 		
 		float m_CursorX = 0.0;

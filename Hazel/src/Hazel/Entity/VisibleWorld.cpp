@@ -20,6 +20,8 @@ namespace Hazel
 		m_Camera.InvertY();
 		Renderer::BeginScene(m_Camera, m_Weather.SunPosition);
 		//this->RenderEntities();
+		if (m_Skybox_active)
+			m_Skybox.Render(m_Camera);
 		m_Isle->Render(m_Camera);
 		Renderer::EndScene();
 		m_Camera.InvertY();

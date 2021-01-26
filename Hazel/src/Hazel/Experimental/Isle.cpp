@@ -15,8 +15,8 @@ namespace Hazel
 	{
 		glGetIntegerv(GL_VIEWPORT, _viewport);
 		srand(time(NULL));
-		LoadHeightmap("C:/Users/Mart/Desktop/stuff/VUE/Pitcairn.png", 0.5);
-		//GenerateRandom(256);
+		//LoadHeightmap("C:/Users/Mart/Desktop/stuff/VUE/Pitcairn.png", 0.5);
+		GenerateRandom(256);
 		std::vector<int> _idx;
 		std::vector<float> _weight;
 		float _normfac = 0.0;
@@ -162,10 +162,12 @@ namespace Hazel
 
 	void Isle::GenerateRandom(int N)
 	{
+		HZ_CORE_INFO("GenerateRandom(int N), N = {0}", N);
+		HZ_CORE_INFO("Old p_N value: {0}", p_N);
 		uint32_t seed = rand() % 32767 + 1;
 		siv::PerlinNoise noisegenerator = siv::PerlinNoise(seed);
 		heightmap = new float[4 * (uint64_t)N * N];
-		WATERLEVEL = 0.0f;// p_Height;
+		WATERLEVEL = p_Height;
 		for (int x = 0; x < N; x++)
 		{
 			int row = N * x;
@@ -181,9 +183,8 @@ namespace Hazel
 
 			}
 		}
-
-		InitialiseMaps();
 		p_N = N;
+		InitialiseMaps();
 		GenerateVA();
 		_isOnGPU = false;
 	}
@@ -192,7 +193,7 @@ namespace Hazel
 	{
 		GPUUpload();
 		m_RenderShader->Bind();
-
+		_upload_colours();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_Heightmap->GetRendererID());
 		glActiveTexture(GL_TEXTURE1);
@@ -795,7 +796,7 @@ namespace Hazel
 	void Isle::_slide()
 	{
 		_isOnGPU = false;
-		for (int i = 0; i < 2000; i++)
+		for (int i = 0; i < (p_N * p_N) / 100; i++)
 		{
 			float r1 = static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (p_N - 2);
 			float r2 = static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (p_N - 2);
@@ -811,7 +812,7 @@ namespace Hazel
 	{
 		
 		float GRAV_FRAC_MIN = 0.6;
-		glm::vec4 GRAV_MAX_HDIF = glm::tan(GRAV_FRICTION_ANGLE * 2.0f * 3.14159f / 360.0f) * p_Cellsize;
+		glm::vec4 GRAV_MAX_HDIF = glm::tan(GRAV_FRICTION_ANGLE * 0.01745f) * p_Cellsize;
 		
 
 		glm::vec4 S = { 0.0, 0.0, 0.0, 0.0 };
@@ -822,7 +823,8 @@ namespace Hazel
 		glm::vec2 P1 = pos;
 		glm::vec4 _H1 = LocalHeight(P1);
 		float H1 = _H1.r + _H1.g + _H1.b + _H1.a;
-
+		if (H1 < WATERLEVEL)
+			GRAV_MAX_HDIF = glm::tan(GRAV_FRICTION_ANGLE * 0.01745f * GRAV_FRICTION_ANGLE_UNDERWATER_MULTIPLIER) * p_Cellsize;
 		while (true)
 		{
 
@@ -1065,6 +1067,18 @@ namespace Hazel
 				_deposit(coral_vol.r + coral_vol.g + coral_vol.b + coral_vol.a, coral_vol, g);
 		}
 		
+	}
+
+	void Isle::_upload_colours()
+	{
+		std::dynamic_pointer_cast<OpenGLShader>(m_RenderShader)->UploadUniformFloat4("terrainColorR", terrainColorR);
+		std::dynamic_pointer_cast<OpenGLShader>(m_RenderShader)->UploadUniformFloat4("terrainColorG", terrainColorG);
+		std::dynamic_pointer_cast<OpenGLShader>(m_RenderShader)->UploadUniformFloat4("terrainColorB", terrainColorB);
+		std::dynamic_pointer_cast<OpenGLShader>(m_RenderShader)->UploadUniformFloat4("terrainColorA", terrainColorA);
+		std::dynamic_pointer_cast<OpenGLShader>(m_RenderShader)->UploadUniformFloat4("plantColorR", plantColorR);
+		std::dynamic_pointer_cast<OpenGLShader>(m_RenderShader)->UploadUniformFloat4("plantColorG", plantColorG);
+		std::dynamic_pointer_cast<OpenGLShader>(m_RenderShader)->UploadUniformFloat4("plantColorB", plantColorB);
+		std::dynamic_pointer_cast<OpenGLShader>(m_RenderShader)->UploadUniformFloat4("plantColorA", plantColorA);
 	}
 
 	glm::vec2 Isle::LocalGradient(glm::vec2 P)
