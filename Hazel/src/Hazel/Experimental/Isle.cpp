@@ -1365,9 +1365,9 @@ namespace Hazel
 		int z = px.g;
 		int idx = 4 * (x * p_N + z);
 		float px_moisture = *(environmentmap + idx);
+		float px_soil_r = *(heightmap + idx + 0);
 		float px_soil_g = *(heightmap + idx + 1);
 		float px_soil_b = *(heightmap + idx + 2);
-		float px_soil_r = *(heightmap + idx + 0);
 		float px_humus = *(heightmap + idx + 3);
 		float px_humus_decay = 0.0;
 		float px_humus_fall = 0.0;
@@ -1381,10 +1381,7 @@ namespace Hazel
 				px_humidity = px_moisture / PL_MIN_HUMID_PROBE_DEPTH;
 			px_humidity = std::fmax(0.0f, px_humidity);
 			float px_temperature = 20.0; // will be in environmentmap later.
-			// calculate steepness of the face
 			float px_tilt = PixelTilt(glm::ivec2(x, z));
-			//
-			float px_humus_decay = -px_humus * (HUMUS_DECAY_RATE);
 
 			glm::vec4 _pop = glm::vec4(*(vegetationmap + idx + 0), *(vegetationmap + idx + 1), *(vegetationmap + idx + 2), *(vegetationmap + idx + 3));
 			float _totalpop = glm::dot(_pop, glm::vec4(1.0));
@@ -1425,7 +1422,6 @@ namespace Hazel
 		}
 		else
 		{
-			px_humus_decay = -px_humus * HUMUS_DECAY_RATE;
 			for (int k = 0; k < 4; k++)
 			{
 				*(vegetationmap + idx + k) *= (1 - PL_OVERGROWTH_ATTRITION);
@@ -1433,9 +1429,8 @@ namespace Hazel
 			*(heightmap + idx + 0) -= px_humus_decay * HUMUS_UNDERWATER_PETRIFY_SOIL.r;
 			*(heightmap + idx + 1) -= px_humus_decay * HUMUS_UNDERWATER_PETRIFY_SOIL.g;
 			*(heightmap + idx + 2) -= px_humus_decay * HUMUS_UNDERWATER_PETRIFY_SOIL.b;
-
 		}
-		
+		px_humus_decay = -px_humus * HUMUS_DECAY_RATE;
 		*(heightmap + idx + 3) += px_humus_decay + 0.6 * px_humus_fall;
 		*(heightmap + idx + 3 + 4) += 0.1 * px_humus_fall;
 		*(heightmap + idx + 3 - 4) += 0.1 * px_humus_fall;

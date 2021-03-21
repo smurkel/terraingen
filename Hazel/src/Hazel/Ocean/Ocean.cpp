@@ -178,7 +178,7 @@ namespace Hazel
 		}
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 		std::dynamic_pointer_cast<OpenGLShader>(cs_FFT)->UploadUniformInt("direction", 1); // vertical (1) second
-		pingpong = 0;
+		//pingpong = 0;
 		for (int s = 0; s < log2(m_N); s++)
 		{
 			std::dynamic_pointer_cast<OpenGLShader>(cs_FFT)->UploadUniformInt("pingpong", pingpong % 2);
@@ -306,8 +306,9 @@ namespace Hazel
 		return reverse;
 	}
 
-	void Ocean::Generate(float Amplitude, glm::vec2 Wind, int Windexponent, bool lightversion)
+	void Ocean::Generate(int resolution, float Amplitude, glm::vec2 Wind, int Windexponent, bool lightversion)
 	{
+		m_N = resolution;
 		m_LightVersion = lightversion;
 		if (m_LightVersion)
 			m_Shader = m_ShaderLight;
@@ -521,7 +522,6 @@ namespace Hazel
 		std::dynamic_pointer_cast<OpenGLShader>(m_Shader)->UploadUniformFloat3("u_ViewPosition", viewPosition);
 		std::dynamic_pointer_cast<OpenGLShader>(m_Shader)->UploadUniformFloat3("u_LightPosition", m_SunPosition);
 		std::dynamic_pointer_cast<OpenGLShader>(m_Shader)->UploadUniformFloat("u_Waterlevel", m_Waterlevel);
-		std::dynamic_pointer_cast<OpenGLShader>(m_Shader)->UploadUniformInt("NORMAL", NORMAL);
 		m_VA->Bind();
 		glDrawElements(m_VA->GetPrimitiveType(), m_VA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 

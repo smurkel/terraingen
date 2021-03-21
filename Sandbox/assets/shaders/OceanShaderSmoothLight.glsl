@@ -56,7 +56,7 @@ void main()
 	viewVec = gl_Position.xyz - u_ViewPosition.xyz;
 
 	// REFLECTION AND REFRACTION MAP COORDINATES
-	GridCoordinates = gl_Position.xyz;//;vec3(gl_Position[0], gl_Position[1], gl_Position[2]);
+	GridCoordinates = gl_Position.xyz;
 	clipSpaceReal = u_ViewProjectionMatrix * vec4(gl_Position.xyz, 1.0);
 	clipSpaceGrid = u_ViewProjectionMatrix * vec4(gl_Position.x, 0.0, gl_Position.z,1.0);
 	gl_Position = u_ViewProjectionMatrix * gl_Position;

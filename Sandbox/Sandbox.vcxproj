@@ -131,13 +131,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="assets\shaders\TerrainShader2.glsl" />
+    <ClInclude Include="assets\shaders\old\TerrainShader2.glsl" />
+    <ClInclude Include="src\Environments\AtSeaTest.h" />
     <ClInclude Include="src\Environments\TerrainTests.h" />
-    <ClInclude Include="src\Environments\TestEnvironment.h" />
+    <ClInclude Include="src\GameObjects\BoatController.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Environments\AtSeaTest.cpp" />
     <ClCompile Include="src\Environments\TerrainTests.cpp" />
-    <ClCompile Include="src\Environments\TestEnvironment.cpp" />
+    <ClCompile Include="src\GameObjects\BoatController.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -159,17 +161,18 @@
     <None Include="assets\shaders\HeightMapShadowSampler.glsl" />
     <None Include="assets\shaders\IsleShader.glsl" />
     <None Include="assets\shaders\IsleShaderNoGeometry.glsl" />
-    <None Include="assets\shaders\LandscapeErosion.glsl" />
-    <None Include="assets\shaders\LandscapeShader.glsl" />
+    <None Include="assets\shaders\old\LandscapeErosion.glsl" />
+    <None Include="assets\shaders\old\LandscapeShader.glsl" />
     <None Include="assets\shaders\OceanShader.glsl" />
+    <None Include="assets\shaders\OceanShaderPoly.glsl" />
     <None Include="assets\shaders\OceanShaderSmooth.glsl" />
     <None Include="assets\shaders\OceanShaderSmoothLight.glsl" />
-    <None Include="assets\shaders\SeaShaderGeometry.glsl" />
-    <None Include="assets\shaders\SeaShaderSmooth.glsl" />
+    <None Include="assets\shaders\old\SeaShaderGeometry.glsl" />
+    <None Include="assets\shaders\old\SeaShaderSmooth.glsl" />
     <None Include="assets\shaders\HeightMapShadowMapper.glsl" />
     <None Include="assets\shaders\SkyBoxShader.glsl" />
-    <None Include="assets\shaders\TerrainShader.glsl" />
-    <None Include="assets\shaders\Texture.glsl" />
+    <None Include="assets\shaders\old\TerrainShader.glsl" />
+    <None Include="assets\shaders\old\Texture.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

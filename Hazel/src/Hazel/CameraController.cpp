@@ -33,7 +33,7 @@ namespace Hazel {
 
 	bool CameraController::OnMouseMoved(MouseMovedEvent& e)
 	{
-		if (Input::IsMouseButtonPressed(1) || Input::IsMouseButtonPressed(2))
+		if (Input::IsMouseButtonPressed(2))
 		{
 			float new_CursorX = Input::GetMouseX();
 			float new_CursorY = Input::GetMouseY();

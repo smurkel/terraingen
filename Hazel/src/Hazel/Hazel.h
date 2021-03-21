@@ -27,9 +27,7 @@
 #include "Hazel/Renderer/VertexArray.h"
 
 #include "Hazel/Renderer/Camera.h"
-#include "Hazel/Entity/Library.h"
 // --- Game stuff? ----------------
-#include "Hazel/Entity/Entity.h"
 #include "Hazel/Ocean/Ocean.h"
 // --- Entry Point ------------------
 //#include "Hazel/Core/EntryPoint.h"

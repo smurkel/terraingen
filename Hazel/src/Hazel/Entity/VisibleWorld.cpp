@@ -5,11 +5,10 @@
 
 namespace Hazel
 {
-	VisibleWorld::VisibleWorld(Library& lib, Camera& cam)
-		: m_Library(lib), m_Camera(cam)
+	VisibleWorld::VisibleWorld(Camera& cam)
+		: m_Camera(cam)
 	{
 	}
-
 	void VisibleWorld::Render()
 	{
 		glEnable(GL_CLIP_DISTANCE0);
@@ -19,20 +18,25 @@ namespace Hazel
 		RenderCommand::Clear();
 		m_Camera.InvertY();
 		Renderer::BeginScene(m_Camera, m_Weather.SunPosition);
-		//this->RenderEntities();
 		if (m_Skybox_active)
 			m_Skybox.Render(m_Camera);
-		m_Isle->Render(m_Camera);
+		if (m_Isle_active)
+			m_Isle->Render(m_Camera);
+		if (m_RenderSystem_active)
+			m_RenderSystem->RenderEntities(m_Camera);
 		Renderer::EndScene();
 		m_Camera.InvertY();
 		glDisable(GL_CLIP_DISTANCE0);
+		
+		//// Refraction pass
 		glEnable(GL_CLIP_DISTANCE1);
-		// Refraction pass
 		m_WaterRendererWrapper.BindRefractionFB();
 		RenderCommand::Clear();
 		Renderer::BeginScene(m_Camera, m_Weather.SunPosition);
-		this->RenderEntities();
-		m_Isle->Render(m_Camera);
+		if (m_Isle_active)
+			m_Isle->Render(m_Camera);
+		if (m_RenderSystem_active)
+			m_RenderSystem->RenderEntities(m_Camera);
 		Renderer::EndScene();
 		glDisable(GL_CLIP_DISTANCE1);
 		// Render to screen
@@ -40,19 +44,15 @@ namespace Hazel
 		RenderCommand::SetClearColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
 		RenderCommand::Clear();
 		Renderer::BeginScene(m_Camera, m_Weather.SunPosition);
-		this->RenderEntities();
 		m_Ocean->Render(m_Camera);
-		m_Isle->Render(m_Camera);
+		if (m_Isle_active)
+			m_Isle->Render(m_Camera);
+		if (m_RenderSystem_active)
+			m_RenderSystem->RenderEntities(m_Camera);
 		Renderer::EndScene();
 	}
 
-	void VisibleWorld::RenderEntities()
-	{
-		for (Entity* entity : m_EntityStack)
-		{
-			entity->Render();
-		}
-	}
+
 
 	WaterRendererWrapper::WaterRendererWrapper()
 	{

@@ -92,7 +92,7 @@ namespace Hazel
 	public:
 		Ocean();
 		~Ocean();
-		void Generate(float Amplitude, glm::vec2 Wind, int Windexponent, bool lightversion = true);
+		void Generate(int resolution, float Amplitude, glm::vec2 Wind, int Windexponent, bool lightversion = true);
 		void Update(Timestep ts);
 		void UpdateSpectrum();
 
@@ -121,9 +121,20 @@ namespace Hazel
 
 		// INTERACTIVE FUNCTIONS
 		void TogglePause() { m_Live = !m_Live; }
-		void ToggleNormal() { NORMAL = 1 - NORMAL; }
 		uint32_t X0 = 0, X1 = 0, X2 = 0, Y0 = 0, Y1 = 0, Y2 = 0, Z0 = 0, Z1 = 0, Z2 = 0;
 		uint32_t N0 = 0, N1 = 0, N2 = 0;
+		int GetSuboceanScale(int select)
+		{
+			switch (select)
+			{
+				case 0: return m_L0;
+				case 1: return m_L1;
+				case 2: return m_L2;
+			}
+		}
+		float GetHeightScaling() { return ((float)RenderSize / ((float)SimulationSize)); }
+		// debug
+		int _GetBFTextureID() { return Butterfly->GetRendererID(); }
 	private:
 		bool m_LightVersion = false;
 		uint32_t BitReverse(uint32_t val, uint32_t N);
@@ -135,11 +146,11 @@ namespace Hazel
 		glm::vec2 m_Wind = { 0.0, 0.0 };
 		int m_Windexponent = 4;
 		float m_A = 1.0;
-		int m_L0 = 723;
-		int m_L1 = 36;
-		int m_L2 = 17;
-		int m_N = 256;
-		float m_Murkiness = 5.0; // rename: transparency
+		int m_L0 = 700;
+		int m_L1 = 43;
+		int m_L2 = 25;
+		int m_N = 0;
+		float m_Murkiness = 2.0; // rename: transparency
 		float m_Waterlevel = 0.0;
 		float m_Time = 0.0;
 		OceanGeometry* m_SubOcean_0;
@@ -153,11 +164,10 @@ namespace Hazel
 		Ref<Shader> cs_FFT = Shader::Create("assets/shaders/compute/FFT.glsl");
 		Ref<Shader> cs_FFT_post = Shader::Create("assets/shaders/compute/FFT_inversionpermutation.glsl");
 
-		int N_Gridpoints = 256; // Resolution of the mesh onto which the ocean is rendered.
-		float SimulationSize = 1024; // Size of the seascape that is contained within the render plane (larger = more repetitions of the underlying geometry textures)
+		int N_Gridpoints = 128; // Resolution of the mesh onto which the ocean is rendered.
+		float SimulationSize = 2500; // Size of the seascape that is contained within the render plane (larger = more repetitions of the underlying geometry textures)
 		float RenderSize = 128; // On-screen size of the plane in which water is rendered
 		bool m_Live = true;
-		int NORMAL = 0;
 		Ref<Shader> m_ShaderDefault = Shader::Create("assets/shaders/OceanShaderSmooth.glsl");
 		Ref<Shader> m_ShaderLight = Shader::Create("assets/shaders/OceanShaderSmoothLight.glsl");
 		Ref<Shader> m_Shader;

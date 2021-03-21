@@ -17,7 +17,7 @@ def DistanceVector(R, r):
         vec[i] = np.sqrt(np.sum((R[i] - r) ** 2))
     return vec
 
-objFile = "C:/Users/Mart/Desktop/dev/Hazel/Sandbox/assets/models/Raft.obj"
+objFile = "C:/Users/mart_/Desktop/dev/Hazel/Sandbox/assets/models/Raft.obj"
 f = open(objFile)
 PROBES = list()
 _tag = float('nan')
@@ -75,6 +75,7 @@ for p in PROBES:
     X = [p[1:] - COM]
     m = _V[p[0]] * _D[p[0]]
     I += m * ((np.dot(X[0], X[0]))*i - np.transpose(X) * X)
+    print(np.transpose(X) * X)
     ix += 1
 
 print("Moment of inertia matrix:\n")
@@ -86,7 +87,7 @@ draggers = list()
 for p in PROBES:
     if p[0] == 1:
         draggers.append(np.asarray(p[1:]))
-
+#%%
 
 draggersFinal = list()
 while len(draggers) >= 2:
