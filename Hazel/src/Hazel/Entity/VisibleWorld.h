@@ -1,11 +1,12 @@
 #pragma once
 
-#include "Hazel/Entity/Entity.h"
 #include "Hazel/Ocean/Ocean.h"
-#include "Hazel/Experimental/Terrain.h"
+//#include "Hazel/Experimental/Terrain.h"
 #include "Hazel/Experimental/Isle.h"
 #include "Hazel/Experimental/Skybox.h"
 #include "Hazel/Renderer/Framebuffer.h"
+#include "Hazel/Renderer/Renderer.h"
+#include "Hazel/ECS/Systems/RenderSystem.h"
 
 namespace Hazel
 {
@@ -50,13 +51,9 @@ namespace Hazel
 	
 	class VisibleWorld
 	{
-		// Container class for all renderables.
-		// Has a list of all rendered objects,
-		// knows the Ocean object.
 	public:
-		VisibleWorld(Library& lib, Camera& cam);
-		void AddEntity(Entity* entity) { m_EntityStack.Add(entity); }
-		void AddIsle(Isle* isle) { m_Isle = isle; }
+		VisibleWorld(Camera& cam);
+		void AddIsle(Isle* isle) { m_Isle = isle; m_Isle_active = true;	}
 		void SetOcean(Ocean* ocean) {
 			m_Ocean = ocean;
 			m_WaterRendererWrapper.SetOcean(ocean);
@@ -66,8 +63,9 @@ namespace Hazel
 			m_Ocean->SetSunPos(m_Weather.SunPosition);
 		}
 		void ToggleSkyboxActive() { m_Skybox_active = !m_Skybox_active; }
+		
 		void SetCamera(Camera& camera) { m_Camera = camera; }
-
+		void SetRenderSystem(Ref<RenderSystem> rendersystem) { m_RenderSystem = rendersystem; m_RenderSystem_active = true; }
 		void Render();
 
 		uint32_t GetReflectionImage() { return m_WaterRendererWrapper.GetReflectionTextureID(); }
@@ -76,20 +74,21 @@ namespace Hazel
 		uint32_t GetReflectionDepthImage() { return m_WaterRendererWrapper.GetReflectionDepthTextureID(); }
 		
 	public:
-		// on init:
-		Library& m_Library;
 		Camera& m_Camera;		
 		// other
 		Weather m_Weather;
 		Hazel::Ocean* m_Ocean = nullptr;
-		Hazel::Isle* m_Isle = nullptr;
-		EntityStack m_EntityStack;
 
 		// skybox
 		Hazel::Skybox m_Skybox;
-		bool m_Skybox_active = false;
+		bool m_Skybox_active = true;
+		// isle
+		Hazel::Isle* m_Isle = nullptr;
+		bool m_Isle_active = false;
+		// entity rendering
+		Hazel::Ref<Hazel::RenderSystem> m_RenderSystem;
+		bool m_RenderSystem_active = false;
 	private:
-		void RenderEntities();
 		WaterRendererWrapper m_WaterRendererWrapper = WaterRendererWrapper();
 	};
 

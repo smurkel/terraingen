@@ -2,18 +2,18 @@
 #include "Hazel/Events/Event.h"
 
 TerrainTests::TerrainTests()
-	: Layer("Test layer"), m_CameraController(), m_VisibleWorld(m_Library, m_CameraController.GetCamera())
+	: Layer("Test layer"), m_CameraController(), m_VisibleWorld(m_CameraController.GetCamera())
 {
 	m_VisibleWorld.AddIsle(&m_Isle);
+	
 	//m_Isle.Sunlight();
 	m_VisibleWorld.m_Skybox.SetCubemap(0);
-	m_VisibleWorld.m_Skybox.SetShader(m_Library.GetShader("assets/shaders/SkyBoxShader.glsl"));
-	m_Ocean.Generate(1.0, glm::vec2(7.0, 7.0), 3);
+	Hazel::Ref<Hazel::Shader> shader = Hazel::Shader::Create("assets/shaders/SkyBoxShader.glsl");
+	m_VisibleWorld.m_Skybox.SetShader(shader);
+	m_Ocean.Generate(128, 1.0, glm::vec2(7.0, 7.0), 10, false);
 	m_Isle.WATERLEVEL = m_Isle.p_Height;
-	//m_Ocean.SetMurkiness(2.0);
 	m_VisibleWorld.SetOcean(&m_Ocean);
-	
-	m_VisibleWorld.SetCamera(m_CameraController.GetCamera());
+	//m_Ocean.SetMurkiness(2.0);	
 }
 
 void TerrainTests::OnUpdate(Hazel::Timestep ts)
@@ -31,6 +31,7 @@ void TerrainTests::OnImGuiRender()
 	RenderingImGuiSettings();
 	IsleImGuiSettings();
 	SimulationImGuiSettings();
+	DebugImGuiSettings();
 }
 
 void TerrainTests::OnEvent(Hazel::Event& e)
@@ -44,8 +45,6 @@ bool TerrainTests::OnKeyPressed(Hazel::KeyPressedEvent& e)
 {
 	if (e.GetKeyCode() == HZ_KEY_SPACE)
 		m_Ocean.TogglePause();
-	if (e.GetKeyCode() == HZ_KEY_N)
-		m_Ocean.ToggleNormal();
 	if (e.GetKeyCode() == HZ_KEY_W)
 		m_Isle.WATERLEVEL += 3.0;
 	if (e.GetKeyCode() == HZ_KEY_S)
@@ -197,6 +196,13 @@ void TerrainTests::RenderingImGuiSettings()
 	ImGui::End();
 }
 
+void TerrainTests::DebugImGuiSettings()
+{
+	ImGui::Begin("Debug");
+	ImGui::Image((void*)m_Ocean._GetBFTextureID(), ImVec2(256, 256));
+	ImGui::End();
+}
+
 void TerrainTests::IsleImGuiSettings()
 {
 	ImGui::Begin("Terrain settings");
@@ -243,9 +249,9 @@ void TerrainTests::SimulationImGuiSettings()
 	ImGui::SliderFloat("Deposition rate underwater", &m_Isle.DEPOSIT_UNDERWATER, 0.0, 1.0);
 	ImGui::SliderFloat("Gravity", &m_Isle.GRAVITY, 0.0, 20.0);
 	ImGui::SliderFloat("Evaporation", &m_Isle.EVAPORATION_COEFFICIENT, 0.0, 1.0);
-	ImGui::SliderFloat("Rock->Pebble degradation", &m_Isle.SOIL_DEGRADATION_RG, 0.0, 1.0);
-	ImGui::SliderFloat("Rock -> Sand degradation", &m_Isle.SOIL_DEGRADATION_RB, 0.0, (1.0 - m_Isle.SOIL_DEGRADATION_RG));
-	ImGui::SliderFloat("Pebble->Sand degradation", &m_Isle.SOIL_DEGRADATION_GB, 0.0, 1.0);
+	ImGui::SliderFloat("Rock -> Pebble degradation", &m_Isle.SOIL_DEGRADATION_RG, 0.0, 1.0);
+	ImGui::SliderFloat("Rock  ->  Sand degradation", &m_Isle.SOIL_DEGRADATION_RB, 0.0, (1.0 - m_Isle.SOIL_DEGRADATION_RG));
+	ImGui::SliderFloat("Pebble -> Sand degradation", &m_Isle.SOIL_DEGRADATION_GB, 0.0, 1.0);
 	ImGui::InputFloat4("Type hardness", &m_Isle.SOIL_HEALTH.r, 2);
 	ImGui::InputFloat4("Type sedimentation rate", &m_Isle.SEDIMENTATION_RATE.r, 2);
 	ImGui::InputFloat4("Erosion max layer fraction", &m_Isle.SOIL_ERODE_MAX_LAYER_FRAC.r, 2);
@@ -280,7 +286,7 @@ void TerrainTests::SimulationImGuiSettings()
 	ImGui::InputFloat4("Deposition increase", &m_Isle.PL_SOIL_DEPOSIT_FAC.r, 2);
 	ImGui::InputFloat4("Moisture absorption rate", &m_Isle.PL_INITIAL_MOISTURE_ABSORB.r, 2);
 	ImGui::Text("Ocean settings");
-	ImGui::SliderFloat("Water level", &m_Isle.WATERLEVEL, -m_Isle.p_Height, m_Isle.p_Height);
+	ImGui::SliderFloat("Water level", &m_Isle.WATERLEVEL, -m_Isle.p_Height, 3.0 * m_Isle.p_Height);
 	ImGui::SliderFloat("Coral gradient ideal", &m_Isle.CORAL_GRADIENT_IDEAL, 0.0, 90.0);
 	ImGui::SliderFloat("Coral gradient range", &m_Isle.CORAL_GRADIENT_RANGE, 0.0, 90.0);
 	ImGui::SliderFloat("Coral depth ideal", &m_Isle.CORAL_DEPTH_IDEAL, 0.0, 20.0);

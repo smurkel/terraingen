@@ -4,7 +4,7 @@
 #include "Camera.h"
 #include "Shader.h"
 #include "Hazel/Core/Timestep.h"
-#include "Hazel/Entity/Model.h"
+#include "Hazel/Renderer/Model.h"
 #include "Hazel/Renderer/Texture.h"
 #include "Hazel/Ocean/Ocean.h"
 

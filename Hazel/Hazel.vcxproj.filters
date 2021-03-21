@@ -78,18 +78,6 @@
     <ClInclude Include="src\Hazel\Core\Timestep.h">
       <Filter>src\Hazel\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Hazel\Entity\Entity.h">
-      <Filter>src\Hazel\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Entity\Library.h">
-      <Filter>src\Hazel\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Entity\Model.h">
-      <Filter>src\Hazel\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Entity\RigidBody.h">
-      <Filter>src\Hazel\Entity</Filter>
-    </ClInclude>
     <ClInclude Include="src\Hazel\Events\ApplicationEvent.h">
       <Filter>src\Hazel\Events</Filter>
     </ClInclude>
@@ -1342,15 +1330,34 @@
     <ClInclude Include="src\Hazel\Renderer\Framebuffer.h" />
     <ClInclude Include="src\Hazel\Experimental\Terrain.h" />
     <ClInclude Include="src\Hazel\Experimental\PerlinNoise.h" />
-    <ClInclude Include="src\Hazel\Entity\Island.h" />
     <ClInclude Include="src\Hazel\Experimental\Landscape.h" />
     <ClInclude Include="src\Hazel\Experimental\Isle.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="src\Hazel\Ocean\WaterPhysicsEngine.h" />
-    <ClInclude Include="src\Hazel\Entity\Boat.h" />
     <ClInclude Include="src\Hazel\Experimental\Skybox.h" />
+    <ClInclude Include="src\Hazel\ECS\EntityManager.h" />
+    <ClInclude Include="src\Hazel\ECS\ComponentManager.h" />
+    <ClInclude Include="src\Hazel\ECS\SystemManager.h" />
+    <ClInclude Include="src\Hazel\ECS\ComponentArray.h" />
+    <ClInclude Include="src\Hazel\ECS\ECSTypes.h" />
+    <ClInclude Include="src\Hazel\ECS\System.h" />
+    <ClInclude Include="src\Hazel\ECS\Coordinator.h" />
+    <ClInclude Include="src\Hazel\ECS\Systems\RenderSystem.h" />
+    <ClInclude Include="src\Hazel\ECS\Components\RenderComponents.h" />
+    <ClInclude Include="src\Hazel\ECS\ResourceManager.h" />
+    <ClInclude Include="src\Hazel\ECS\ResourceArray.h" />
+    <ClInclude Include="src\Hazel\Renderer\Model.h" />
+    <ClInclude Include="src\Hazel\ECS\Systems\PhysicsSystem.h" />
+    <ClInclude Include="src\Hazel\ECS\Components\RigidBody.h">
+      <Filter>src\Hazel\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\ECS\Components\Transform.h" />
+    <ClInclude Include="src\Hazel\ECS\Components\ProbeArray.h" />
+    <ClInclude Include="src\Hazel\ECS\Components\ProbeArrayComponent.h" />
+    <ClInclude Include="src\Hazel\ECS\Systems\BoatSystem.h" />
+    <ClInclude Include="src\Hazel\ECS\Components\BoatParams.h" />
+    <ClInclude Include="src\Hazel\ECS\MultiframeProcessManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Hazel\Application.cpp">
@@ -1358,18 +1365,6 @@
     </ClCompile>
     <ClCompile Include="src\Hazel\CameraController.cpp">
       <Filter>src\Hazel</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hazel\Entity\Entity.cpp">
-      <Filter>src\Hazel\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hazel\Entity\Library.cpp">
-      <Filter>src\Hazel\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hazel\Entity\Model.cpp">
-      <Filter>src\Hazel\Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hazel\Entity\RigidBody.cpp">
-      <Filter>src\Hazel\Entity</Filter>
     </ClCompile>
     <ClCompile Include="src\Hazel\ImGui\ImGuiBuild.cpp">
       <Filter>src\Hazel\ImGui</Filter>
@@ -1452,14 +1447,19 @@
     <ClCompile Include="src\Hazel\Entity\VisibleWorld.cpp" />
     <ClCompile Include="src\Hazel\Renderer\Framebuffer.cpp" />
     <ClCompile Include="src\Hazel\Experimental\Terrain.cpp" />
-    <ClCompile Include="src\Hazel\Entity\Island.cpp" />
     <ClCompile Include="src\Hazel\Experimental\Landscape.cpp" />
     <ClCompile Include="src\Hazel\Experimental\Isle.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="src\Hazel\Ocean\WaterPhysicsEngine.cpp" />
-    <ClCompile Include="src\Hazel\Entity\Boat.cpp" />
     <ClCompile Include="src\Hazel\Experimental\Skybox.cpp" />
+    <ClCompile Include="src\Hazel\ECS\Systems\RenderSystem.cpp" />
+    <ClCompile Include="src\Hazel\Renderer\Model.cpp" />
+    <ClCompile Include="src\Hazel\ECS\Systems\PhysicsSystem.cpp" />
+    <ClCompile Include="src\Hazel\ECS\Components\RigidBody.cpp">
+      <Filter>src\Hazel\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Hazel\ECS\Components\ProbeArray.cpp" />
+    <ClCompile Include="src\Hazel\ECS\Systems\BoatSystem.cpp" />
   </ItemGroup>
 </Project>

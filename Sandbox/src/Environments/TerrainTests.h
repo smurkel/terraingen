@@ -5,6 +5,7 @@
 
 #include "Hazel/Experimental/Isle.h"
 #include "Hazel/Entity/VisibleWorld.h"
+
 class TerrainTests : public Hazel::Layer
 {
 public:
@@ -17,7 +18,6 @@ private:
 	bool OnKeyPressed(Hazel::KeyPressedEvent& e);
 	
 	Hazel::CameraController m_CameraController;
-	Hazel::Library m_Library;
 
 	Hazel::Ocean m_Ocean;
 	Hazel::Isle m_Isle = Hazel::Isle::Isle();
@@ -27,6 +27,7 @@ private:
 	void IsleImGuiSettings();
 	void SimulationImGuiSettings();
 	void RenderingImGuiSettings();
+	void DebugImGuiSettings();
 	bool toggleCoral = false;
 	bool toggleDry = false;
 	bool toggleErode = false;

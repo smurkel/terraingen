@@ -5,7 +5,6 @@
 
 #include "Hazel/Ocean/Ocean.h"
 #include "Hazel/Ocean/WaterPhysicsEngine.h"
-#include "Hazel/Entity/Boat.h"
 #include "Hazel/Entity/VisibleWorld.h"
 #include "Hazel/Experimental/Terrain.h"
 
